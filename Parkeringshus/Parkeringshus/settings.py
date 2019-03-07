@@ -29,7 +29,7 @@ SECRET_KEY = 'ws)i^so4lrc!*dx+xp4sfj@c%8^ai7*ck#=pf=lw@fd_5dbsm&'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'parkering.tk', 'www.parkering.tk', '172.104.131.1',
+    'parkering.tk', 'www.parkering.tk', '172.104.131.1', 'localhost', '127.0.0.1', '[::1]',
 ]
 
 
