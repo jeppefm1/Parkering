@@ -1,0 +1,38 @@
+<!-- Dropdown struktur -->
+<ul id="dropdown1" class="dropdown-content">
+  <li><a href="/indstillinger">Indstillinger</a></li>
+  <li><a href="/support">Support</a></li>
+</ul>
+
+<!-- navbar struktur -->
+<nav>
+  <div class="nav-wrapper">
+    <a href="/" class="brand-logo center">Parkering</a>
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    {% if user.is_authenticated %}
+      <ul class="right hide-on-med-and-down">
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{{user.username}}<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a href="/logout">Log ud</a></li>
+      </ul>
+    {% else %}
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/login">Login</a></li>
+        <li><a href="/registrer">Registrer</a></li>
+        </ul>
+    {% endif %}
+  </div>
+</nav>
+<!-- er man på mobil -->
+<ul class="sidenav" id="mobile-demo">
+  {% if user.is_authenticated %}
+    <ul class="right hide-on-med-and-down">
+      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{{user.username}}<i class="material-icons right">arrow_drop_down</i></a></li>
+      <li><a href="/logud">Log ud</a></li>
+      </ul>
+  {% else %}
+    <ul class="right hide-on-med-and-down">
+      <li><a href="/login">Login</a></li>
+      <li><a href="/registrer">Registrer</a></li>
+      </ul>
+  {% endif %}
+</ul>
