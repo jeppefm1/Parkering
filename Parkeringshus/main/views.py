@@ -57,6 +57,9 @@ def login_request(request):
     return render(request = request,
                     template_name = "main/login.html",
                     context={"form":form})
-def support_request(request):
-    return render(request=request,
-                  template_name="main/support.html",)
+
+def support(request):
+    return render(request, 'main/support.html')
+
+def addplate(request):
+    return render(request = request, template_name = "main/addplate.html")

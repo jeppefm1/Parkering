@@ -10,3 +10,11 @@ class Tutorial(models.Model):
 
     def __str__(self):
         return self.title
+
+class Contact(models.Model):
+    mail = models.EmailField()
+    user = models.CharField(max_length=150)
+    subject = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    file = models.FileField()

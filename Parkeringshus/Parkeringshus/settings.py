@@ -45,6 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'tinymce',
+    'django.contrib.sites',
+    'django.contrib.humanize',
+    'markdown_deux',
+    'bootstrapform',
+    'helpdesk',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +69,7 @@ LANGUAGES = (
 )
 
 ROOT_URLCONF = 'Parkeringshus.urls'
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -98,7 +104,6 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
