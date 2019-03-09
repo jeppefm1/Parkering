@@ -1,24 +1,24 @@
 <nav class="nav-extended">
    <div class="nav-wrapper">
-     <a href="#" class="brand-logo center">Parkering</a>
+     <a href="/#" class="brand-logo center">Parkering</a>
      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
      <ul id="nav-mobile" class="right hide-on-med-and-down">
        {% if user.is_authenticated %}
-         <li><a href="messages">{{user.username}}<span class="new badge" data-badge-caption="nye">4</span></a></li>
-         <li><a href="logout">Log ud</a></li>
+         <li><a href="/messages">{{user.username}}<span class="new badge" data-badge-caption="nye">4</span></a></li>
+         <li><a href="/logout">Log ud</a></li>
        {% else %}
-        <li><a href="login">Log ind</a></li>
-         <li><a href="registrer">Registrer</a></li>
+        <li><a href="/login">Log ind</a></li>
+         <li><a href="/registrer">Registrer</a></li>
        {% endif %}
      </ul>
    </div>
    {% if user.is_authenticated %}
      <div class="nav-content">
        <ul class="tabs tabs-transparent">
-         <li class="tab right"><a href="settings">Indstillinger</a></li>
-         <li class="tab right"><a href="support">Support</a></li>
+         <li class="tab right"><a href="/settings">Indstillinger</a></li>
+         <li class="tab right"><a href="/support">Support</a></li>
          {% if user.is_staff %}
-          <li class="tab right"><a href="admin">Admin</a></li>
+          <li class="tab right"><a href="/admin">Admin</a></li>
          {% endif %}
        </ul>
      </div>
@@ -28,9 +28,9 @@
  <ul class="sidenav" id="mobile-demo">
    {% if user.is_authenticated %}
      <li><a href="#">{{user.username}}</a></li>
-     <li><a href="logout">Log ud</a></li>
+     <li><a href="/logout">Log ud</a></li>
    {% else %}
-    <li><a href="login">Log ind</a></li>
-     <li><a href="registrer">Registrer</a></li>
+    <li><a href="/login">Log ind</a></li>
+     <li><a href="/registrer">Registrer</a></li>
    {% endif %}
  </ul>

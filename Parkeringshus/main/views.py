@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Tutorial
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
+from .forms import NewUserForm
 
 # Create your views here.
 def homepage(request):
@@ -13,7 +14,7 @@ def homepage(request):
 
 def register(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = NewUserForm(request.POST)
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
@@ -27,8 +28,7 @@ def register(request):
             return render(request = request,
                           template_name = "main/register.html",
                           context={"form":form})
-
-    form = UserCreationForm
+    form = NewUserForm
     return render(request,
                   "main/register.html",
                   context={"form":form})
@@ -48,7 +48,7 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"Du er nu logget på som {username}")
-                return redirect('/')
+                return redirect('main:homepage')
             else:
                 messages.error(request, "Brugernavn og adgangskode passer ikke.")
         else:
@@ -57,3 +57,6 @@ def login_request(request):
     return render(request = request,
                     template_name = "main/login.html",
                     context={"form":form})
+def support_request(request):
+    return render(request=request,
+                  template_name="main/support.html",)
