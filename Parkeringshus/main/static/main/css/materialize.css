@@ -1,6 +1,24 @@
 .materialize-red {
   background-color: #2196F3 !important; }
 
+.promo i {
+  margin: 40px 0;
+  color: #ee6e73;
+  font-size: 7rem;
+  display: block;
+}
+
+.promo-caption {
+  font-size: 1.7rem;
+  font-weight: 500;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+i.icon-blue {
+    color: #338dff;
+}
+
 .materialize-red-text {
   color: #2196F3 !important; }
 
