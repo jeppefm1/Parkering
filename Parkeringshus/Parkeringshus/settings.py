@@ -44,12 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
-    'tinymce',
     'django.contrib.sites',
     'django.contrib.humanize',
-    'markdown_deux',
-    'bootstrapform',
-    'helpdesk',
 ]
 
 MIDDLEWARE = [
