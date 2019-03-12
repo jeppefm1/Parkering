@@ -6,5 +6,5 @@ import random
 
 import imageProcess
 import findChars
-import plateClass
-import charClass
+import classPossiblePlate
+import classPossibleChar

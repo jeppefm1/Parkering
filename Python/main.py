@@ -4,4 +4,4 @@ import os
 
 import findChars
 import findPlates
-import plateClass
+import classPossiblePlate

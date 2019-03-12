@@ -6,4 +6,4 @@ import random
 
 import main
 import imageProcess
-import charClass
+import classPossibleChar
