@@ -1,38 +1,38 @@
-<!-- Dropdown struktur -->
-<ul id="dropdown1" class="dropdown-content">
-  <li><a href="/indstillinger">Indstillinger</a></li>
-  <li><a href="/support">Support</a></li>
-</ul>
+<div class="navbar-fixed">
+  <nav class="nav-extended fixed">
+     <div class="nav-wrapper">
+       <a href="/#" class="brand-logo center">Parkering</a>
+       <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+       <ul id="nav-mobile" class="right hide-on-med-and-down">
+         {% if user.is_authenticated %}
+           <li><a href="/messages">{{user.username}}<span class="new badge" data-badge-caption="nye">4</span></a></li>
+           <li><a href="/logout">Log ud</a></li>
+         {% else %}
+          <li><a href="/login">Log ind</a></li>
+           <li><a href="/registrer">Registrer</a></li>
+         {% endif %}
+       </ul>
+     </div>
+     {% if user.is_authenticated %}
+       <div class="nav-content">
+         <ul class="tabs tabs-transparent">
+           <li class="tab right"><a href="/settings">Indstillinger</a></li>
+           <li class="tab right"><a href="/support">Support</a></li>
+           {% if user.is_staff %}
+            <li class="tab right"><a href="/admin">Admin</a></li>
+           {% endif %}
+         </ul>
+       </div>
+     {% endif %}
+  </nav>
+</div>
 
-<!-- navbar struktur -->
-<nav>
-  <div class="nav-wrapper">
-    <a href="/" class="brand-logo center">Parkering</a>
-    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-    {% if user.is_authenticated %}
-      <ul class="right hide-on-med-and-down">
-        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{{user.username}}<i class="material-icons right">arrow_drop_down</i></a></li>
-        <li><a href="/logout">Log ud</a></li>
-      </ul>
-    {% else %}
-      <ul class="right hide-on-med-and-down">
-        <li><a href="/login">Login</a></li>
-        <li><a href="/registrer">Registrer</a></li>
-        </ul>
-    {% endif %}
-  </div>
-</nav>
-<!-- er man på mobil -->
-<ul class="sidenav" id="mobile-demo">
-  {% if user.is_authenticated %}
-    <ul class="right hide-on-med-and-down">
-      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{{user.username}}<i class="material-icons right">arrow_drop_down</i></a></li>
-      <li><a href="/logud">Log ud</a></li>
-      </ul>
-  {% else %}
-    <ul class="right hide-on-med-and-down">
-      <li><a href="/login">Login</a></li>
-      <li><a href="/registrer">Registrer</a></li>
-      </ul>
-  {% endif %}
-</ul>
+ <ul class="sidenav" id="mobile-demo">
+   {% if user.is_authenticated %}
+     <li><a href="#">{{user.username}}</a></li>
+     <li><a href="/logout">Log ud</a></li>
+   {% else %}
+    <li><a href="/login">Log ind</a></li>
+     <li><a href="/registrer">Registrer</a></li>
+   {% endif %}
+ </ul>

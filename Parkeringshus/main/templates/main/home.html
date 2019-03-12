@@ -1,19 +1,9 @@
 {% extends 'main/header.html' %}
 
 {% block content %}
-  <div class="row">
-    {% for tut in tutorials %}
-        <div class="col s12 m6">
-          <div class="card blue-grey darken-1 hoverable">
-            <div class="card-content white-text">
-              <span class="card-title">{{tut.title}}</span>
-              <p style="font-size:70%">Skrevet {{tut.published}}</p>
-              <p>{{tut.content|safe}}</p>
-            </div>
-            <div class="card-action">
-              <a href="admin">Gå til admin</a>
-            </div>
-          </div>
-        </div>
-    {% endfor %}
+  {% if user.is_authenticated %}
+    {% include "main/includes/brugerside.html" %}
+  {% else %}
+    {% include "main/includes/startside.html" %}
+  {% endif %}
 {% endblock %}
