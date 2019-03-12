@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Tutorial
+from .models import Contact, AddPlate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .forms import NewUserForm
+from .forms import NewUserForm,PlateForm
+from datetime import datetime
 
 # Create your views here.
 def homepage(request):
     return render(request=request,
-                  template_name="main/home.html",
-                  context={"tutorials": Tutorial.objects.all})
+                  template_name="main/home.html")
 
 def register(request):
     if request.method == "POST":
@@ -62,4 +62,18 @@ def support(request):
     return render(request, 'main/support.html')
 
 def addplate(request):
-    return render(request = request, template_name = "main/addplate.html")
+    current_user = request.user
+    form = PlateForm(request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            plateNumber = form.cleaned_data.get('plateNumber')
+            newPlate = AddPlate(plateNumber=plateNumber, userid=current_user.id, state=1, add_date=datetime.now())
+            newPlate.save()
+            messages.info(request, f"Nummerpladen {plateNumber} afventer nu godkendelse.")
+            return redirect('main:addplate')
+        else:
+            messages.error(request, f"Der var noget galt med den indtastede nummerplade, prøv igen.")
+
+    return render(request = request,
+                  template_name = "main/addplate.html",
+                  context={"form":form,"plates":AddPlate.objects.all,"uid":current_user.id})

@@ -17,42 +17,42 @@
       </div>
     </div>
   </nav>
+  <ul class="collapsible">
   {% if user.is_authenticated %}
-    <!-- Kør når der er nummerplader -->
-      <!-- Loop igennem nummerplader for brugeren -->
-        <ul class="collapsible">
+    {% for plate in plates %}
+      {% if plate.userid == uid %}
+        {% if plate.state == 0 %}
           <li>
-            <div class="collapsible-header"><i class="material-icons">done</i><b>Bekræftet</b>: AT76021</div>
-            <div class="collapsible-body"><span>Tilføjet: 29. juli 2019<br>Historik: tryk her</span></div>
+            <div class="collapsible-header"><i class="material-icons">done</i><b>Bekræftet</b>: {{plate.plateNumber}}</div>
+            <div class="collapsible-body"><span>Tilføjet: {{plate.add_date}}<br>Historik: tryk her</span></div>
           </li>
+        {% elif plate.state == 1 %}
           <li>
-            <div class="collapsible-header"><i class="material-icons">loop</i><em>Afventer</em>: TX90312</div>
-            <div class="collapsible-body"><span><em>Godkendelse afventer</em></span></div>
+            <div class="collapsible-header"><i class="material-icons">loop</i><em>Afventer</em>: {{plate.plateNumber}}</div>
+            <div class="collapsible-body"><span><em>Godkendelse afventer</em><br>Tilføjet: {{plate.add}}</span></div>
           </li>
-          <li>
-            <div class="collapsible-header"><i class="material-icons">report</i><b><em>Afvist</em></b>: DD2e3</div>
-            <div class="collapsible-body"><span>Nummerpladen afviger fra standarden, og kunne derfor ikke tilføjes.</span></div>
-          </li>
-        </ul>
-        <br>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </ul>
 
     <!-- Kør for alle -->
     <div class="row">
       <div class="col offset-l2 s12">
-              <div class="row">
-                <form class="col s12">
-                  <div class="input-field col s6">
-                    <input id="number_plate" type="text" class="validate" required>
-                    <label for="number_plate">Nummerplade</label>
-                  </div>
-                  <div class="input-field col s2">
-                   <p class="center-align"><button class="btn waves-effect waves-light" type="submit" name="action">Tilføj<i class="material-icons right">add</i></button></p>
-                  </div>
-                </form>
-              </div>
+        <div class="row">
+          <form class="col s12" method="POST">
+            {% csrf_token %}
+            <div class="input-field col s6">
+            {{form.as_p}}
             </div>
-          </div>
+            <div class="input-field col s2">
+             <p class="center-align"><button class="btn waves-effect waves-light" type="submit" name="action">Tilføj<i class="material-icons right">add</i></button></p>
+            </div>
+          </form>
         </div>
+      </div>
+    </div>
+
 
   {% else %}
     <div class="row">

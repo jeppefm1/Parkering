@@ -14,6 +14,7 @@
   <!-- Cookie-information og GDPR-compliance -->
   <link rel="stylesheet" type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
   <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -28,6 +29,10 @@
         var elems = document.querySelectorAll('.tooltipped');
         var instances = M.Tooltip.init(elems, {});
       });
+      document.addEventListener('DOMContentLoaded', function() {
+          var elems = document.querySelectorAll('.sidenav');
+          var instances = M.Sidenav.init(elems, {});
+        });
   </script>
 </head>
 
@@ -64,7 +69,7 @@
           <ul>
             <li><a class="grey-text text-lighten-3" href="/support"><b>Kontakt support</b></a></li>
             <li><a class="grey-text text-lighten-3" href="mailto:service@parkering.tk"><b>Mail:</b><br>service@parkering.tk</a></li>
-            <li><a class="grey-text text-lighten-3"><b>Telefon:</b><br>+45 29245856</a></li>
+            <li><a class="grey-text text-lighten-3"><b>Telefon:</b><br>+45 82837482</a></li>
           </ul>
         </div>
         <div class="col l2 offset-l1 s12">
@@ -91,10 +96,3 @@
     </div>
   </footer>
 </body>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="{% static 'tinymce/js/prism.js' %}"></script>
-<script>document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.sidenav');
-    var instances = M.Sidenav.init(elems, {});
-  });</script>
