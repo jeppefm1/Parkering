@@ -12,6 +12,6 @@ class PossiblePlate:
         self.imgGrayscaled = None
         self.imgThressholded = None
         #Position i billedet
-        self.LocationInImg = None
+        self.locationInImg = None
         #Mulige bogstaver eller tal
-        self.strCharsInPlate = ""
+        self.charsInPlate = ""
