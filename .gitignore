@@ -1,10 +1,2 @@
 
-Parkeringshus/Parkeringshus/__pycache__/urls.cpython-37.pyc
-Parkeringshus/Parkeringshus/__pycache__/settings.cpython-37.pyc
-Parkeringshus/main/migrations/__pycache__/0005_auto_20190309_1145.cpython-37.pyc
-Parkeringshus/main/migrations/__pycache__/0004_auto_20190308_1958.cpython-37.pyc
-Parkeringshus/main/__pycache__/views.cpython-37.pyc
-Parkeringshus/main/__pycache__/urls.cpython-37.pyc
-Parkeringshus/main/__pycache__/models.cpython-37.pyc
-Parkeringshus/main/__pycache__/forms.cpython-37.pyc
-Parkeringshus/main/__pycache__/admin.cpython-37.pyc
+*.pyc
