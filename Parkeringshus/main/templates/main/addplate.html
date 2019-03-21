@@ -1,12 +1,6 @@
 {% extends 'main/header.html' %}
 
 {% block content %}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var elems = document.querySelectorAll('.collapsible');
-      var instances = M.Collapsible.init(elems, {});
-    });
-  </script>
   <br><br><br>
   <nav>
     <div class="nav-wrapper">
@@ -29,7 +23,7 @@
         {% elif plate.state == 1 %}
           <li>
             <div class="collapsible-header"><i class="material-icons">loop</i><em>Afventer</em>: {{plate.plateNumber}}</div>
-            <div class="collapsible-body"><span><em>Godkendelse afventer</em><br>Tilføjet: {{plate.add}}</span></div>
+            <div class="collapsible-body"><span><em>Godkendelse afventer</em><br>Tilføjet: {{plate.add_date}}</span></div>
           </li>
         {% endif %}
       {% endif %}
