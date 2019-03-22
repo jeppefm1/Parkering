@@ -1,0 +1,42 @@
+{% load app_filters %}{% load humanize %}
+<br><h3>Hej {{user.username}}!</h3>
+{% if log.count > 0 %} <!-- Hvis brugeren har tidligere historik (derved også nummerplade) -->
+<h5>Du har {{log.count}} poster i din parkeringshistorik.</h5>
+  <ul class="collapsible">
+  {% for log in logs %}
+      {% if log.exited == NULL %}
+        <li>
+          <div class="collapsible-header"><i class="material-icons">schedule</i><b>{{log.numberplate}}</b>: {{log.entered}}</div>
+          <div class="collapsible-body"><span>Bilen med nummerpladen <b>{{log.numberplate}}</b> kørte ind i parkeringshuset {% for house in parkplace %}{% if house.id == log.entid %}
+          <b>{{house.name}}</b>{% endif %}{% endfor %} den {{log.entered.day}}/{{log.entered.month}} klokken {{log.entered.hour}}:{{log.entered.minute}}.</span></div>
+        </li>
+      {% else %}
+        <li>
+          <div class="collapsible-header"><i class="material-icons">check_circle</i><b>{{log.numberplate}}</b>: {{log.entered}}</div>
+          <div class="collapsible-body"><span>Bilen med nummerpladen <b>{{log.numberplate}}</b> kørte ind i parkeringshuset {% for house in parkplace %}{% if house.id == log.entid %}
+          <b>{{house.name}}</b>{% endif %}{% endfor %} den {{log.entered.day}}/{{log.entered.month}} klokken {{log.entered.hour}}:{{log.entered.minute}}.
+          Bilen kørte ud igen den {{log.exited.day}}/{{log.exited.month}} klokken {{log.exited.hour}}:{{log.exited.minute}}.<br><br>
+          <ul>
+            <li><b>Ankomst:</b> {{log.entered}}</li>
+            <li><b>Udkørsel:</b> {{log.exited}}</li>
+            <li><b>Varighed:</b> {{ log.entered|timesince:log.exited }}</li>
+            {% for house in parkplace %}{% if house.id == log.entid %}
+            <li><b>Takst i {{house.name}}:</b> {{house.hourlyRate}} kroner per påbegyndt time</li>
+            <li><b>At betale:</b> {{ log.get_time_diff|multiply:house.hourlyRate|intcomma }} DKK</li>
+            {% endif %}{% endfor %}
+          </ul>
+          </span></div>
+        </li>
+      {% endif %}
+  {% endfor %}
+  </ul>
+{% elif plates.count == 0 %} <!-- Hvis brugeren endnu ikke har tilføjet nogen nummerplade -->
+  <h5>Du har endnu ikke tilføjet nogen nummerplader!</h5><h6><a href="/addplate">Tryk her</a> (eller på plusset nede i højre hjørne) for at tilføje en nummerplade.</h6>
+{% else %}
+  {% if plates.count == 1 %}
+    <h5>Du har endnu ikke brugt nogen af vores parkeringshuse med din registrerede nummerplade.</h5>
+  {% else %}
+    <h5>Du har endnu ikke brugt nogen af vores parkeringshuse med dine registrerede nummerplader.</h5>
+  {% endif %}
+  <h6>Find os her!</h6>
+{% endif %}

@@ -1,17 +1,21 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Contact, AddPlate
+from .models import Contact, Plates, Log, ParkingEntity
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .forms import NewUserForm,PlateForm
+from .forms import NewUserForm, PlateForm
 from datetime import datetime
 
 # Create your views here.
 def homepage(request):
-    return render(request=request,
-                  template_name="main/home.html")
-
+    current_user = request.user
+    uid = current_user.id
+    if current_user.is_authenticated:
+        return render(request=request,
+                      template_name="main/home.html",
+                      context={"plates":Plates.objects.filter(userid=uid),"logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),"uid":uid,"parkplace":ParkingEntity.objects.all})
+    else: return render(request=request,template_name="main/home.html")
 def register(request):
     if request.method == "POST":
         form = NewUserForm(request.POST)
@@ -67,7 +71,7 @@ def addplate(request):
     if request.method == 'POST':
         if form.is_valid():
             plateNumber = form.cleaned_data.get('plateNumber')
-            newPlate = AddPlate(plateNumber=plateNumber, userid=current_user.id, state=1, add_date=datetime.now())
+            newPlate = Plates(plateNumber=plateNumber, userid=current_user.id, state=1, add_date=datetime.now())
             newPlate.save()
             messages.info(request, f"Nummerpladen {plateNumber} afventer nu godkendelse.")
             return redirect('main:addplate')
@@ -76,4 +80,4 @@ def addplate(request):
 
     return render(request = request,
                   template_name = "main/addplate.html",
-                  context={"form":form,"plates":AddPlate.objects.all,"uid":current_user.id})
+                  context={"form":form,"plates":Plates.objects.all,"uid":current_user.id})

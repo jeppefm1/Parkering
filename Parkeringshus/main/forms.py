@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from main.models import AddPlate
+from main.models import Plates
 from django.contrib.auth import authenticate, login
 
 class NewUserForm(UserCreationForm):
@@ -20,5 +20,5 @@ class NewUserForm(UserCreationForm):
 
 class PlateForm(forms.ModelForm):
     class Meta:
-        model = AddPlate
+        model = Plates
         fields = ['plateNumber']
