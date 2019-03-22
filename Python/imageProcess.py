@@ -23,8 +23,8 @@ def preprocessImg(imgUnprocessed):
     #Thressholder billedet - hvilket betyder at billedet bliver binært simplificeret.
     #Prøver dermed at lave billedet sort hvidt.
     #Anvender en adaptiv funktion i cv2, der kigger billedet og tilpasser metoden til sort hvid konverteringen.
-    imgThresh = cv2.adaptiveThreshold(imgBlurred, 255.0, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, THRESSHOLD_BLOCKSIZE, THESSHOLD_WEIGHT)
-    return imgGrayscale, imgThresh
+    imgThressholded = cv2.adaptiveThreshold(imgBlurred, 255.0, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, THRESSHOLD_BLOCKSIZE, THESSHOLD_WEIGHT)
+    return imgGrayscaled, imgThressholded
 
 
 def HSVGrayscale(imgUnprocessed):

@@ -10,6 +10,7 @@ import classPossibleChar
 
 #Konstanter til at chekke et bogstav eller tal.
 #Disse definerer dermed hvordan et char ser ud.
+MIN_PIXEL_WIDTH = 2
 MIN_PIXEL_HEIGHT = 8
 MIN_ASPECT_RATIO = 0.25
 MAX_ASPECT_RATIO = 1.0
@@ -29,17 +30,17 @@ RESIZED_CHAR_IMAGE_WIDTH = 20
 RESIZED_CHAR_IMAGE_HEIGHT = 30
 MIN_CONTOUR_AREA = 100
 
-svmModel = cv2.ml.SVM_create()
+svmModel = cv2.ml.SVM_load("SVMmodel.xml")
 
-#Funktion til at loade modellen
-def loadModel():
-    try:
-        svmModel = cv2.ml.SVM_load("SVMmodel.xml")
-        return True
-    except:
-        print("Modellen kunne ikke åbnes. Har du trænet modellen inden?\n")
-        os.system("pause")
-        return False
+# #Funktion til at loade modellen
+# def loadModel():
+#     try:
+#         svmModel = cv2.ml.SVM_load("SVMmodel.xml")
+#         return True
+#     except:
+#         print("Modellen kunne ikke åbnes. Har du trænet modellen inden?\n")
+#         os.system("pause")
+#         return False
 
 def detectCharsInPlates(listOfPossiblePlates):
     #Chekker om der er mulige nummerplader. Hvis ikke spring resten over.
@@ -73,9 +74,9 @@ def detectCharsInPlates(listOfPossiblePlates):
         for i in range(0, len(listOfListsOfMatchingCharsInPlate)):
             #Sorter listen efter center possion. Fra venstre mod højre.
             #Anvender en lamda funktion, der tager center positionen, som nøgle til sorteringen.
-            listOfListsOfMatchingCharsInPlate[i].sort(key = lambda matchingChar: matchingChar.intCenterX)
+            listOfListsOfMatchingCharsInPlate[i].sort(key = lambda matchingChar: matchingChar.centerX)
             #Anvender egen funktion til at fjerne overlap mellem bogstaver
-            listOfListsOfMatchingCharsInPlate[i] = removeInnerOverlappingChars(listOfListsOfMatchingCharsInPlate[i])
+            listOfListsOfMatchingCharsInPlate[i] = removeElementOfOverlappingChars(listOfListsOfMatchingCharsInPlate[i])
 
         #Antager at gruppen med flest bogstaver må være den korrekte nummerplade.
         #Kan dermed sortere de andre nummerplader fra.
@@ -101,7 +102,7 @@ def findPossibleCharsInPlate(imgGrayscaled, imgThressholded):
     imgThressholdedCopy = imgThressholded.copy()
 
     #Find alle konturer i nummerpladen
-    contours, npaHierarchy = cv2.findContours(imgThreshCopy, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours, npaHierarchy = cv2.findContours(imgThressholdedCopy, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     #Loop gennem alle konturerne
     for contour in contours:
@@ -124,11 +125,12 @@ def checkIfPossibleChar(possibleChar):
 
 #Funktion der sorterer chars. Fra start af er alle mulige chars blandet sammen i en stor liste.
 #Målet med denne funktion er at arrangere listen således, at det bliver en liste over liter med matchende chars.
+#Med matchende chars menes der, at charsene er af cirka samme form og størrelse, samt at de er beliggende tæt på hinanden.
 def findListOfListsOfMatchingChars(listOfPossibleChars):
     listOfListsOfMatchingChars = []
     #loop gennem chars
     for possibleChar in listOfPossibleChars:
-        listOfMatchingChars = findListOfListsOfMatchingChars(possibleChar, listOfPossibleChars)
+        listOfMatchingChars = findListOfMatchingChars(possibleChar, listOfPossibleChars)
         #Gem i listen
         listOfMatchingChars.append(possibleChar)
         #Hvis længden af listen med matchende bogstaver er over den fastfastte grænse fortsæt,
@@ -145,28 +147,132 @@ def findListOfListsOfMatchingChars(listOfPossibleChars):
         listOfPossibleCharsWithMatchesRemoved = list(set(listOfPossibleChars) - set(listOfMatchingChars))
 
         #Kalder sig selv igen, for at få de andre lister med matchende chars
-        recursiveListOfListsOfMatchingChars = findListOfListsOfMatchingChars(listOfPossibleCharsWithCurrentMatchesRemoved)      # recursive call
+        recursiveListOfListsOfMatchingChars = findListOfListsOfMatchingChars(listOfPossibleCharsWithMatchesRemoved)      # recursive call
         #Looper igennem lister og gemmer i listen med lister.
         for recursiveListOfMatchingChars in recursiveListOfListsOfMatchingChars:        # for each list of matching chars found by recursive call
             listOfListsOfMatchingChars.append(recursiveListOfMatchingChars)
         break
     return listOfListsOfMatchingChars
 
-
+#Denne funktion anvendes til samme formål som den tidligere. Til at sortere en stor liste af chars.
+#Denne funktion modtager den store liste, sorterer dem efter matchene chars, og returnerer de matchende i en ny liste.
 def findListOfMatchingChars(possibleChar, listOfChars):
+    listOfMatchingChars = []
+    #Loop gennem mulige chars
+    for possibleMatchingChar in listOfChars:
+        #Hvis det er det samme char, som vi prøver at finde matchende chars til,
+        #skal loopet springe den over, og dermed ikke inkludere den i listen med matchende chars.
+        if possibleMatchingChar == possibleChar:
+            continue
+
+        #Beregn data om muligt matchende char. Disse skal senere bruges til at chekke om de to chars er matchende.
+        #Afstand mellem chars
+        distanceBetweenChars = distanceBetweenCharsFunction(possibleChar, possibleMatchingChar)
+        #Vinkel mellem chars
+        angleBetweenChars = angleBetweenCharsFunction(possibleChar, possibleMatchingChar)
+        #Ændring i størrelsen - er de cirka samme areal?
+        changeInArea = float(abs(possibleMatchingChar.boundingRectArea - possibleChar.boundingRectArea)) / float(possibleChar.boundingRectArea)
+        #Ændring i højde og bredde
+        changeInWidth = float(abs(possibleMatchingChar.boundingRectWidth - possibleChar.boundingRectWidth)) / float(possibleChar.boundingRectWidth)
+        changeInHeight = float(abs(possibleMatchingChar.boundingRectHeight - possibleChar.boundingRectHeight)) / float(possibleChar.boundingRectHeight)
+
+        #Hvis disse beregninger er inden for de fastfastte grænser, skal de tilføjes til listen med matchende chars.
+        if (distanceBetweenChars < (possibleChar.diagonalSize * MAX_DIAG_SIZE_MULTIPLE_AWAY) and
+            angleBetweenChars < MAX_ANGLE_BETWEEN_CHARS and
+            changeInArea < MAX_CHANGE_IN_AREA and
+            changeInWidth < MAX_CHANGE_IN_WIDTH and
+            changeInHeight < MAX_CHANGE_IN_HEIGHT):
+            listOfMatchingChars.append(possibleMatchingChar)
+
     return listOfMatchingChars
 
 #Funktion der anvender pythagoras til at betstemme distancen mellem to chars
-def distanceBetweenChars(firstChar, secondChar):
-    x = abs(firstChar.intCenterX - secondChar.intCenterX)
-    y = abs(firstChar.intCenterY - secondChar.intCenterY)
+def distanceBetweenCharsFunction(firstChar, secondChar):
+    x = abs(firstChar.centerX - secondChar.centerX)
+    y = abs(firstChar.centerY - secondChar.centerY)
     return math.sqrt((x ** 2) + (y ** 2))
 
-def angleBetweenChars(firstChar, secondChar):
+#Funktion til at bestemme vinkelen mellen to chars ud fra deres center possition
+def angleBetweenCharsFunction(firstChar, secondChar):
+    adjacent = float(abs(firstChar.centerX - secondChar.centerX))
+    opposite = float(abs(firstChar.centerY - secondChar.centerY))
+
+    #Hvis ikke den hosliggende katete er 0, anvend trignometri til at bestemme vinklen.
+    #Hvis den er 0, sæt vinklen til 90 grader.
+    if(adjacent != 0.0):
+        angleinRad = math.atan(opposite/adjacent)
+    else:
+        angleinRad = 1.57
+
+    #Konverter til grader
+    angleInDeg = angleinRad * (180/math.pi)
     return angleInDeg
 
-def removeInnerOverlappingChars(listOfMatchingChars):
-    return listOfMatchingCharsWithInnerCharRemoved
+#Funktion til at håndtere overlap mellem chars. Her bliver den inderste char/den mindste char fjernet.
+#Dermed undgås forviring ved genkendelse.
+def removeElementOfOverlappingChars(listOfMatchingChars):
+    listOfMatchingCharsOverlappingResolved = list(listOfMatchingChars)
 
+    #Loop gennem chars
+    for currentChar in listOfMatchingChars:
+        for otherChar in listOfMatchingChars:
+            if (currentChar != otherChar):
+
+                #Hvis afstanden er mindre end dirgonal afstanden ganget en konstant,
+                #altså at afstanden er så lille, at de to chars går ind over hinanden.
+                if distanceBetweenCharsFunction(currentChar, otherChar) < (currentChar.diagonalSize * MIN_DIAG_SIZE_MULTIPLE_AWAY):
+                    #Fjern det mindste af to chars der går ind over hinanden
+                    if currentChar.boundingRectArea < otherChar.boundingRectArea:
+                        #Checkr om det er blevet fjernet en gang allerede
+                        if currentChar in listOfMatchingCharsWithInnerCharRemoved:
+                            listOfMatchingCharsOverlappingResolved.remove(currentChar)
+                    else:
+                        #Checkr om det er blevet fjernet en gang allerede
+                        if otherChar in listOfMatchingCharsWithInnerCharRemoved:
+                            listOfMatchingCharsWithInnerCharRemoved.remove(otherChar)
+    return listOfMatchingCharsOverlappingResolved
+
+#Funktion til at genkende chars i billedet. Hertil anvendes SVM modellen, der blev trænet tidligere.
 def recognizeCharsInPlate(imgThressholded, listOfMatchingChars):
+    charsCombined = ""
+
+    #Find størrlese og lav en tom matrix med den korrekte størrelse.
+    #Denne skal anvendes til at gemme et farve billede af nummerpladen. Dette skal bruges således, at det er muligt at tegne i farver oven på.
+    height, width = imgThressholded.shape
+    imgThresholdedColor = np.zeros((height, width, 3), np.uint8)
+
+    #Sorter chars efter x position. Dermed bliver nummerpladen i den korrekte læseretning.
+    #Hertil anvendes en lamda funktion, der finder centerX koordinaten.
+    listOfMatchingChars.sort(key = lambda matchingChar: matchingChar.centerX)
+
+    #Lav farve version af nummerpladen
+    cv2.cvtColor(imgThressholded, cv2.COLOR_GRAY2BGR, imgThresholdedColor)
+
+    for currentChar in listOfMatchingChars:
+        #Tegn regtangler rundt om de forskellige chars
+        pt1 = (currentChar.boundingRectX, currentChar.boundingRectY)
+        pt2 = ((currentChar.boundingRectX + currentChar.boundingRectWidth), (currentChar.boundingRectY + currentChar.boundingRectHeight))
+        cv2.rectangle(imgThresholdedColor, pt1, pt2, main.COLOR_GREEN, 2)
+
+        #Klip det enkelte char ud til genkendelse
+        imgchar = imgThressholded[currentChar.boundingRectY : currentChar.boundingRectY + currentChar.boundingRectHeight,
+                           currentChar.boundingRectX : currentChar.boundingRectX + currentChar.boundingRectWidth]
+        #Tilpas størrelsen af det udklippede char
+        charResized = cv2.resize(imgchar, (RESIZED_CHAR_IMAGE_WIDTH, RESIZED_CHAR_IMAGE_HEIGHT))
+        #Gør billedet flat
+        charResized = charResized.reshape((1, RESIZED_CHAR_IMAGE_WIDTH * RESIZED_CHAR_IMAGE_HEIGHT))
+        #Konverter til float
+        charResized = np.float32(charResized)
+
+        print(charResized.shape)
+        print(svmModel.getVarCount())
+        #print(charResized)
+
+
+        #Anvend model til forudsigelse
+        resultChar= svmModel.predict(charResized)[1]
+        print(resultChar)
+        print(chr(resultChar))
+        charsCombined = charsCombined + chr(resultChar)
+
     return charsCombined

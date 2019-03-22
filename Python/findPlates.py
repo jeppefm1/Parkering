@@ -17,7 +17,7 @@ def findPlatesInImg(imgCaptured):
     #Tom liste til at gemme mulige nummerplader
     listOfPossiblePlates = []
     #Finder billedets dimmensioner
-    height, width, numChannels = imgOriginalScene.shape
+    height, width, numChannels = imgCaptured.shape
 
     #Laver tomme arrays til billeder og konturer
     imgGrayscaleScene = np.zeros((height, width, 1), np.uint8)
@@ -62,7 +62,7 @@ def findPotentialCharsInIMG(imgThresh):
 
         #Hvis konturen opfylder reglerne for en char, gemmes objektet i en liste.
         if findChars.checkIfPossibleChar(possibleChar):
-            countOfPossibleChars = intCountOfPossibleChars + 1
+            countOfPossibleChars = countOfPossibleChars + 1
             listOfPossibleChars.append(possibleChar)
 
     return listOfPossibleChars
@@ -101,7 +101,7 @@ def extractPlate(imgCaptured, listOfMatchingChars):
     #Bestemmer derfor den vinkel som nummerpladen er drejet med.
     #Hertil anvendes sinus relationen.
     opposite = listOfMatchingChars[len(listOfMatchingChars) - 1].centerY - listOfMatchingChars[0].centerY
-    hypotenuse = DetectChars.distanceBetweenChars(listOfMatchingChars[0], listOfMatchingChars[len(listOfMatchingChars) - 1])
+    hypotenuse = findChars.distanceBetweenCharsFunction(listOfMatchingChars[0], listOfMatchingChars[len(listOfMatchingChars) - 1])
     correctionAngleRad = math.asin(opposite / hypotenuse)
     correctionAngleDeg = correctionAngleRad * (180.0 / math.pi)
 
@@ -111,11 +111,11 @@ def extractPlate(imgCaptured, listOfMatchingChars):
     #Opretter derefter en rotationsmatrix til at rotere nummerpladen.
     #Hertil anvendes den beregnede vinkel.
     #Syntax: cv2.getRotationMatrix2D(center, angle, scale)
-    rotationMatrix = cv2.getRotationMatrix2D(tuple(plateCenter), correctionAngleInDeg, 1.0)
+    rotationMatrix = cv2.getRotationMatrix2D(tuple(plateCenter), correctionAngleDeg, 1.0)
 
     #Den oprettede matrix kan derefter anvendes til at roterer hele billedet
     #Her skal billedets oplysninger bruges.
-    height, width, numChannels = imgOriginal.shape
+    height, width, numChannels = imgCaptured.shape
     imgRotated = cv2.warpAffine(imgCaptured, rotationMatrix, (width, height))
 
     #Beskærer billedet således at det kun er nummerpladen
