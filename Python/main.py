@@ -6,7 +6,7 @@ import findChars
 import findPlates
 import classPossiblePlate
 
-IMAGE =  "test.png"
+IMAGE =  "dansk.jpg"
 
 COLOR_BLACK = (0.0, 0.0, 0.0)
 COLOR_WHITE = (255.0, 255.0, 255.0)
@@ -16,11 +16,6 @@ COLOR_RED = (0.0, 0.0, 255.0)
 
 
 def main():
-    #Indlæs model
-    # modelLoaded = findChars.loadModel()
-    # if(modelLoaded == False):
-    #     print("\nerror: Could not loade model\n")  # show error message
-    #     return
     #Indlæs billede
     image  = cv2.imread(IMAGE)
 
@@ -58,9 +53,9 @@ def main():
 
         #Vis nummerpladen på billedet
         writeLicensePlateCharsOnImage(image, licPlate)
-        cv2.imshow("imgOriginalScene", image)
+        cv2.imshow("Nummerplade genkendt", image)
         #Gem billedet
-        cv2.imwrite("imgOriginalScene.png", image)
+        cv2.imwrite("nummerpladeGenkendt.png", image)
         cv2.waitKey(0)
         return
 

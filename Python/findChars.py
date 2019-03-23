@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import math
 import random
+from sklearn.svm import SVC, LinearSVC
+from sklearn.externals import joblib
 
 import main
 import imageProcess
@@ -30,17 +32,13 @@ RESIZED_CHAR_IMAGE_WIDTH = 20
 RESIZED_CHAR_IMAGE_HEIGHT = 30
 MIN_CONTOUR_AREA = 100
 
-svmModel = cv2.ml.SVM_load("SVMmodel.xml")
+#FIndlæs modellen
+try:
+    clf = joblib.load("Model.pkl")
+except:
+    print("Modellen kunne ikke åbnes. Har du trænet modellen inden?\n")
+    os.system("pause")
 
-# #Funktion til at loade modellen
-# def loadModel():
-#     try:
-#         svmModel = cv2.ml.SVM_load("SVMmodel.xml")
-#         return True
-#     except:
-#         print("Modellen kunne ikke åbnes. Har du trænet modellen inden?\n")
-#         os.system("pause")
-#         return False
 
 def detectCharsInPlates(listOfPossiblePlates):
     #Chekker om der er mulige nummerplader. Hvis ikke spring resten over.
@@ -263,16 +261,10 @@ def recognizeCharsInPlate(imgThressholded, listOfMatchingChars):
         charResized = charResized.reshape((1, RESIZED_CHAR_IMAGE_WIDTH * RESIZED_CHAR_IMAGE_HEIGHT))
         #Konverter til float
         charResized = np.float32(charResized)
+        charResized = charResized.reshape(1, -1)
 
-        print(charResized.shape)
-        print(svmModel.getVarCount())
-        #print(charResized)
-
-
-        #Anvend model til forudsigelse
-        resultChar= svmModel.predict(charResized)[1]
-        print(resultChar)
-        print(chr(resultChar))
-        charsCombined = charsCombined + chr(resultChar)
+        result = clf.predict(charResized)
+        print("Char fundet: ", chr(result))
+        charsCombined = charsCombined + chr(result)
 
     return charsCombined

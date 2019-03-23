@@ -2,6 +2,8 @@ import numpy as np
 import sys
 import cv2
 import os
+from sklearn.svm import SVC, LinearSVC
+from sklearn.externals import joblib
 
 #Constanter der definerer bogstaver
 CONTOUR_AREA_MINIMUM = 100
@@ -79,20 +81,25 @@ else:
     #Laver labels om til et 1D array af floats.
     labelsArray = np.array(imgClassifications, dtype=np.int32)
     labelsArrayReshaped = np.reshape(labelsArray,(labelsArray.size, 1))
+    labelsArrayReshaped = labelsArrayReshaped.ravel()
     #Lukker vinduer
     cv2.destroyAllWindows()
     print("Data indsamlet - Starter SVM træning")
 
-    #Sætter SVM op
-    svm_model = cv2.ml.SVM_create()
-    svm_model.setGamma(2)
-    #Høj afstand mellem planer
-    svm_model.setC(1)
-    #Transformer data ved hjælp af kernel
-    svm_model.setKernel(cv2.ml.SVM_RBF)
-    svm_model.setType(cv2.ml.SVM_C_SVC)
-    #Træn model
-    svm_model.train(imagesFlattend, cv2.ml.ROW_SAMPLE, labelsArrayReshaped)
-    #Gem model
-    svm_model.save("SVMmodel.xml")
-    print("Model trænet og gemt")
+    #Type of classifier
+    #clf = LinearSVC()
+    clf = SVC(gamma='scale', verbose=1)
+
+    clf.fit(imagesFlattend, labelsArrayReshaped)
+
+    joblib.dump(clf, "ModelKernel.pkl", compress=3)
+
+    print("Training complete and model saved to file.")
+
+    #Test model
+    testArray = np.array(imagesFlattend[0])
+    testArray = testArray.reshape(1, -1)
+
+    result = clf.predict(testArray)
+    print(chr(result))
+    print(chr(labelsArrayReshaped[0]))
