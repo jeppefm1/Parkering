@@ -2,15 +2,12 @@ import numpy as np
 import sys
 import cv2
 import os
-from sklearn.svm import SVC, LinearSVC
-from sklearn.externals import joblib
-import pickle as pkl
 
 #Constanter der definerer bogstaver
 CONTOUR_AREA_MINIMUM = 70
 RESIZED_IMAGE_WIDTH = 30
 RESIZED_IMAGE_HEIGHT = 45
-IMAGE_PATH = 'DanskTraining2.png'
+IMAGE_PATH = 'DanskTraining.png'
 
 #Henter billede med træningsdata
 imgTrainingData = cv2.imread(IMAGE_PATH)
@@ -60,7 +57,7 @@ else:
             contourProcessedResized = cv2.resize(contourProcessed, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))
             #Vis billeder
             cv2.imshow("Behandlet kontour", contourProcessedResized)
-            cv2.imshow("Træning af SVM", imgTrainingData)
+            cv2.imshow("Dataopsamling", imgTrainingData)
             #Venter på bruger, der klassificerer kontour
             intChar = cv2.waitKey(0)
             #print("IntChar", intChar)
@@ -95,29 +92,12 @@ else:
     #Laver labels om til et 1D array af floats.
     labelsArray = np.array(imgClassifications, dtype=np.int32)
     labelsArrayReshaped = np.reshape(labelsArray,(labelsArray.size, 1))
-    labelsArrayReshaped = labelsArrayReshaped.ravel()
+
     #Lukker vinduer
     cv2.destroyAllWindows()
-    print("Data indsamlet - Starter SVM træning")
+    print("Data indsamlet - Gemmer data")
 
-    #Test model
-    testArray = np.array(imagesFlattend[0])
-    testArray = testArray.reshape(1, -1)
+    np.savetxt("classificationsStor.txt", labelsArrayReshaped)
+    np.savetxt("flattened_imagesStor.txt", imagesFlattend)
 
-    #Træn linear model
-    clf = LinearSVC()
-    clf.fit(imagesFlattend, labelsArrayReshaped)
-    joblib.dump(clf, "ModelTest.pkl", compress=3)
-
-    #Lav kort test af model
-    result = clf.predict(testArray)
-    print("Result Linear: ", chr(result))
-    print(chr(labelsArrayReshaped[0]))
-
-    print("Training complete and model saved to file.")
-#
-# #Save training data
-# labelsArray = np.array(imgClassifications, np.float32)
-# imagesFlattend = imagesFlattend.reshape((imagesFlattend.size, 1))
-# np.savetxt("classifications.txt", labelsArray)
-# np.savetxt("flattened_images.txt", imagesFlattend)          #
+    print("Model saved to file.")

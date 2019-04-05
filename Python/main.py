@@ -6,7 +6,7 @@ import findChars
 import findPlates
 import classPossiblePlate
 
-IMAGE =  "6.png"
+IMAGE =  "Billeder/6.png"
 
 COLOR_BLACK = (0.0, 0.0, 0.0)
 COLOR_WHITE = (255.0, 255.0, 255.0)
@@ -28,7 +28,7 @@ def main():
 
     #Check om der blev fundet nummerplaer
     if len(listOfPossiblePlates) == 0:
-        print("\nno license plates were detected\n")
+        print("\nIngen nummerplader blev opdaget\n")
     else:
         #Sorter mulige nummerplader efter længde. Her kommer den længste nummerplade først.
         #Til sorteringen anvendes en lamda funktion, der finder længden af nummerpladen
@@ -42,14 +42,13 @@ def main():
 
         #Hvis ingen chars er genkendt
         if len(licPlate.charsInPlate) == 0:
-            print("\nno characters were detected\n\n")
+            print("\nIngen chars blev opdaget\n\n")
             return
 
         #Tegn regtangel omkring nummerplade
         drawRedRectangleAroundPlate(image, licPlate)
         #Print nummerpladen
-        print("\nlicense plate read from image = " + licPlate.charsInPlate + "\n")  # write license plate text to std out
-        print("----------------------------------------")
+        print("\n Nummerplade genkendt i billede = " + licPlate.charsInPlate + "\n")  # write license plate text to std out
 
         #Vis nummerpladen på billedet
         writeLicensePlateCharsOnImage(image, licPlate)

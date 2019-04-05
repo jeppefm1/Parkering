@@ -3,8 +3,6 @@ import cv2
 import numpy as np
 import math
 import random
-from sklearn.svm import SVC, LinearSVC
-from sklearn.externals import joblib
 
 import main
 import imageProcess
@@ -30,14 +28,22 @@ MAX_ANGLE_BETWEEN_CHARS = 12.0
 MIN_NUMBER_OF_MATCHING_CHARS = 3
 RESIZED_CHAR_IMAGE_WIDTH = 30
 RESIZED_CHAR_IMAGE_HEIGHT = 45
-MIN_CONTOUR_AREA = 70
+MIN_CONTOUR_AREA = 100
 
-#FIndlæs modellen
+#FIndlæs datasæt
 try:
-    clf = joblib.load("ModelLinearDansk.pkl")
+    classifications = np.loadtxt("classificationsStor.txt", np.int32)
+    flattenedImages = np.loadtxt("flattened_imagesStor.txt", np.float32)
+
 except:
-    print("Modellen kunne ikke åbnes. Har du trænet modellen inden?\n")
+    print("Træningsdataen kunne ikke åbnes. Har du klassificeret chars inden?\n")
     os.system("pause")
+
+#Set modellen op.
+kNearest = cv2.ml.KNearest_create()
+classifications = classifications.reshape((classifications.size, 1))
+kNearest.setDefaultK(3)
+kNearest.train(flattenedImages, cv2.ml.ROW_SAMPLE, classifications)
 
 
 def detectCharsInPlates(listOfPossiblePlates):
@@ -261,10 +267,10 @@ def recognizeCharsInPlate(imgThressholded, listOfMatchingChars):
         charResized = charResized.reshape((1, RESIZED_CHAR_IMAGE_WIDTH * RESIZED_CHAR_IMAGE_HEIGHT))
         #Konverter til float
         charResized = np.float32(charResized)
-        charResized = charResized.reshape(1, -1)
 
-        result = clf.predict(charResized)
-        print("Char fundet: ", chr(result))
-        charsCombined = charsCombined + chr(result)
+        #Lav KNN forudsigelse
+        retval, results, neigh_resp, dists = kNearest.findNearest(charResized, k = 3)
+        result = str(chr(int(results[0][0])))
+        charsCombined = charsCombined + result
 
     return charsCombined

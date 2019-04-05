@@ -38,7 +38,7 @@ def findPlatesInImg(imgCaptured):
         if possiblePlate.imgPlate is not None:
             listOfPossiblePlates.append(possiblePlate)
     #Print antallet af fundne nummerplader
-    print("\n" + str(len(listOfPossiblePlates)) + " possible plates found")
+    print("\n" + str(len(listOfPossiblePlates)) + " mulige nummerplader fundet")
     return listOfPossiblePlates
 
 
