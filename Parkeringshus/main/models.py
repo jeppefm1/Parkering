@@ -34,6 +34,11 @@ class Log(models.Model):
         timeDiff = timediffSec.total_seconds() / 3600 # Da det er per time, omregnes der fra sekunder til timer
         return math.ceil(timeDiff) # Da det er per påbegyndt time, skal der rundes op.
 
+    def time_till_now(self):
+        timediffSec = datetime.now - self.entered
+        timeDiff = timediffSec.total_seconds() / 3600 # Da det er per time, omregnes der fra sekunder til timer
+        return math.ceil(timeDiff) # Da det er per påbegyndt time, skal der rundes op.
+
 class ParkingEntity(models.Model):
     name = models.CharField(max_length=20,default="")
     available = models.IntegerField(default=500)

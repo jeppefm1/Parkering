@@ -14,7 +14,7 @@ def homepage(request):
     if current_user.is_authenticated:
         return render(request=request,
                       template_name="main/home.html",
-                      context={"plates":Plates.objects.filter(userid=uid),"logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),"uid":uid,"parkplace":ParkingEntity.objects.all})
+                      context={"plates":Plates.objects.filter(userid=uid),"logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),"now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
     else: return render(request=request,template_name="main/home.html")
 def register(request):
     if request.method == "POST":
