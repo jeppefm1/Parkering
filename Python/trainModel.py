@@ -97,7 +97,7 @@ else:
     cv2.destroyAllWindows()
     print("Data indsamlet - Gemmer data")
 
-    np.savetxt("classificationsStor.txt", labelsArrayReshaped)
+    np.savetxt("labelStor.txt", labelsArrayReshaped)
     np.savetxt("flattened_imagesStor.txt", imagesFlattend)
 
     print("Model saved to file.")

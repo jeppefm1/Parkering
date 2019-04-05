@@ -32,7 +32,7 @@ MIN_CONTOUR_AREA = 100
 
 #FIndlæs datasæt
 try:
-    classifications = np.loadtxt("classificationsStor.txt", np.int32)
+    labels = np.loadtxt("labelStor.txt", np.int32)
     flattenedImages = np.loadtxt("flattened_imagesStor.txt", np.float32)
 
 except:
@@ -43,7 +43,7 @@ except:
 kNearest = cv2.ml.KNearest_create()
 classifications = classifications.reshape((classifications.size, 1))
 kNearest.setDefaultK(3)
-kNearest.train(flattenedImages, cv2.ml.ROW_SAMPLE, classifications)
+kNearest.train(flattenedImages, cv2.ml.ROW_SAMPLE, labels)
 
 
 def detectCharsInPlates(listOfPossiblePlates):
