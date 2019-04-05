@@ -6,7 +6,7 @@ import findChars
 import findPlates
 import classPossiblePlate
 
-IMAGE =  "dansk.jpg"
+IMAGE =  "6.png"
 
 COLOR_BLACK = (0.0, 0.0, 0.0)
 COLOR_WHITE = (255.0, 255.0, 255.0)

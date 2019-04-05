@@ -28,13 +28,13 @@ MAX_ANGLE_BETWEEN_CHARS = 12.0
 
 #Andre konstanter
 MIN_NUMBER_OF_MATCHING_CHARS = 3
-RESIZED_CHAR_IMAGE_WIDTH = 20
-RESIZED_CHAR_IMAGE_HEIGHT = 30
-MIN_CONTOUR_AREA = 100
+RESIZED_CHAR_IMAGE_WIDTH = 30
+RESIZED_CHAR_IMAGE_HEIGHT = 45
+MIN_CONTOUR_AREA = 70
 
 #FIndlæs modellen
 try:
-    clf = joblib.load("Model.pkl")
+    clf = joblib.load("ModelLinearDansk.pkl")
 except:
     print("Modellen kunne ikke åbnes. Har du trænet modellen inden?\n")
     os.system("pause")
@@ -222,12 +222,12 @@ def removeElementOfOverlappingChars(listOfMatchingChars):
                     #Fjern det mindste af to chars der går ind over hinanden
                     if currentChar.boundingRectArea < otherChar.boundingRectArea:
                         #Checkr om det er blevet fjernet en gang allerede
-                        if currentChar in listOfMatchingCharsWithInnerCharRemoved:
+                        if currentChar in listOfMatchingCharsOverlappingResolved:
                             listOfMatchingCharsOverlappingResolved.remove(currentChar)
                     else:
                         #Checkr om det er blevet fjernet en gang allerede
-                        if otherChar in listOfMatchingCharsWithInnerCharRemoved:
-                            listOfMatchingCharsWithInnerCharRemoved.remove(otherChar)
+                        if otherChar in listOfMatchingCharsOverlappingResolved:
+                            listOfMatchingCharsOverlappingResolved.remove(otherChar)
     return listOfMatchingCharsOverlappingResolved
 
 #Funktion til at genkende chars i billedet. Hertil anvendes SVM modellen, der blev trænet tidligere.

@@ -4,12 +4,13 @@ import cv2
 import os
 from sklearn.svm import SVC, LinearSVC
 from sklearn.externals import joblib
+import pickle as pkl
 
 #Constanter der definerer bogstaver
-CONTOUR_AREA_MINIMUM = 100
-RESIZED_IMAGE_WIDTH = 20
-RESIZED_IMAGE_HEIGHT = 30
-IMAGE_PATH = 'training_img.png'
+CONTOUR_AREA_MINIMUM = 70
+RESIZED_IMAGE_WIDTH = 30
+RESIZED_IMAGE_HEIGHT = 45
+IMAGE_PATH = 'DanskTraining2.png'
 
 #Henter billede med træningsdata
 imgTrainingData = cv2.imread(IMAGE_PATH)
@@ -73,10 +74,23 @@ else:
                 #Gemmer det flade billede i listen med flade billeder
                 imagesFlattend = np.append(imagesFlattend, flattendImg, 0)
             else:
-                print("FEJL - STORE BOGSTAVER PÅKRÆVET! - Aktiver Caps Lock og prøv igen")
-                cv2.waitKey(0)
-                sys.exit()
+                #Prøv at intaste char igen
+                print("FEJL - Ikke gyldigt bogstav - STORE BOGSTAVER PÅKRÆVET! - Aktiver Caps Lock og prøv igen")
+                intChar = cv2.waitKey(0)
+                #print("IntChar", intChar)
+                #Chekker om keyboard input er et muligt input i listen med gyldige tegn.
+                if(intChar in intValidChars):
+                    print("Valid char found")
+                    #Gemmer label i listen med labels
+                    imgClassifications.append(intChar)
+                    #Gør billedet flat
+                    flattendImg = contourProcessedResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))
+                    #Gemmer det flade billede i listen med flade billeder
+                    imagesFlattend = np.append(imagesFlattend, flattendImg, 0)
 
+                else:
+                    cv2.waitKey(0)
+                    sys.exit()
 
     #Laver labels om til et 1D array af floats.
     labelsArray = np.array(imgClassifications, dtype=np.int32)
@@ -86,20 +100,24 @@ else:
     cv2.destroyAllWindows()
     print("Data indsamlet - Starter SVM træning")
 
-    #Type of classifier
-    #clf = LinearSVC()
-    clf = SVC(gamma='scale', verbose=1)
-
-    clf.fit(imagesFlattend, labelsArrayReshaped)
-
-    joblib.dump(clf, "ModelKernel.pkl", compress=3)
-
-    print("Training complete and model saved to file.")
-
     #Test model
     testArray = np.array(imagesFlattend[0])
     testArray = testArray.reshape(1, -1)
 
+    #Træn linear model
+    clf = LinearSVC()
+    clf.fit(imagesFlattend, labelsArrayReshaped)
+    joblib.dump(clf, "ModelTest.pkl", compress=3)
+
+    #Lav kort test af model
     result = clf.predict(testArray)
-    print(chr(result))
+    print("Result Linear: ", chr(result))
     print(chr(labelsArrayReshaped[0]))
+
+    print("Training complete and model saved to file.")
+#
+# #Save training data
+# labelsArray = np.array(imgClassifications, np.float32)
+# imagesFlattend = imagesFlattend.reshape((imagesFlattend.size, 1))
+# np.savetxt("classifications.txt", labelsArray)
+# np.savetxt("flattened_images.txt", imagesFlattend)          #
