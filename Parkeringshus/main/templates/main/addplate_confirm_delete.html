@@ -1,0 +1,38 @@
+{% extends 'main/header.html' %}
+
+{% block content %}
+  <br><br><br>
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="/" class="breadcrumb">Startside</a>
+        <a href="/#!" class="breadcrumb">Bruger</a>
+        <a href="/addplate" class="breadcrumb">Tilføj nummerplade</a>
+      </div>
+    </div>
+  </nav>
+  <ul class="collapsible">
+  {% if user.is_authenticated %}
+    Er du helt sikker på at du ønsker at slette {{ plate.title }}?
+    <form method="post">
+    {% csrf_token %}
+    <input type="submit" value="Confirm">
+    </form>
+  {% else %}
+    <div class="row">
+      <div class="col offset-l3 s12 m6">
+        <div class="card red darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Adgang nægtet!</span>
+            <p>Da du ikke er logget ind, har du ikke mulighed for at ændre og tilføje nummerplader.</p>
+          </div>
+          <div class="card-action">
+            <a href="/">Startside</a>
+            <a href="/login">Log ind</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 app_name = "main"
@@ -10,4 +10,5 @@ urlpatterns = [
 	path('login/', views.login_request, name="login"),
 	path('support/', views.support, name="login"),
 	path('addplate/', views.addplate, name="addplate"),
+	re_path('addplate/(?P<pk>\d+)/delete/$', views.deleteplate.as_view(), name="delete_plate"),
 ]

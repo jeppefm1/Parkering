@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 from .models import Contact, Plates, Log, ParkingEntity
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import NewUserForm, PlateForm
 from datetime import datetime
+from django.views.generic.edit import DeleteView
 
 # Create your views here.
 def homepage(request):
@@ -81,3 +83,7 @@ def addplate(request):
     return render(request = request,
                   template_name = "main/addplate.html",
                   context={"form":form,"plates":Plates.objects.all,"uid":current_user.id})
+
+class deleteplate(DeleteView):
+    model = Plates
+    success_url = reverse_lazy('main:addplate')

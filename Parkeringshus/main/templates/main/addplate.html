@@ -2,15 +2,6 @@
 
 {% block content %}
   <br><br><br>
-  <nav>
-    <div class="nav-wrapper">
-      <div class="col s12">
-        <a href="/" class="breadcrumb">Startside</a>
-        <a href="/#!" class="breadcrumb">Bruger</a>
-        <a href="/addplate" class="breadcrumb">Tilføj nummerplade</a>
-      </div>
-    </div>
-  </nav>
   <ul class="collapsible">
   {% if user.is_authenticated %}
     {% for plate in plates %}
@@ -23,7 +14,12 @@
         {% elif plate.state == 1 %}
           <li>
             <div class="collapsible-header"><i class="material-icons">loop</i><em>Afventer</em>: {{plate.plateNumber}}</div>
-            <div class="collapsible-body"><span><em>Godkendelse afventer</em><br>Tilføjet: {{plate.add_date}}</span></div>
+            <div class="collapsible-body"><span><em>Godkendelse afventer</em><br>Tilføjet: {{plate.add_date}}<br><br>
+            <form action="{% url 'main:delete_plate' pk=plate.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <input type="hidden" name="plate_id" value="{{ plate.id }}" />
+              <button class="btn waves-effect waves-light" type="submit" name="action">Slet<i class="material-icons right">delete_outline</i>  </button>
+            </form>
           </li>
         {% endif %}
       {% endif %}
