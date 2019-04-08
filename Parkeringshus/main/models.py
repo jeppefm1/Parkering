@@ -3,9 +3,12 @@ from datetime import datetime
 from django.utils.timezone import utc
 from django.core.validators import RegexValidator
 import math
+import re
+from django.core.exceptions import ValidationError
 
 # Create your models here.
-valid = [RegexValidator(regex='/\S+/', message='Må ikke indeholde mellemrum.', code='nomatch'),RegexValidator(regex='[N][o][n][e]', message='Må ikke indeholde mellemrum.', code='nomatch')]
+valid = [RegexValidator(regex=r"^[A-Z]{2}[0-9]{5}", message='Nummerpladen skal være af formen AT27362 og må ikke indeholde små bogstaver.')]
+
 class Contact(models.Model):
     mail = models.EmailField()
     user = models.CharField(max_length=150)
@@ -15,7 +18,7 @@ class Contact(models.Model):
     file = models.FileField()
 
 class Plates(models.Model):
-    plateNumber = models.CharField(max_length=8, verbose_name=u"Nummerplade", blank=True, null=True)
+    plateNumber = models.CharField(max_length=7, verbose_name=u"Nummerplade", blank=False, null=False, validators=valid)
     userid = models.IntegerField(default=1)
     state = models.IntegerField(default=0)
     add_date = models.DateTimeField("dato tilføjet", default=datetime.now())
