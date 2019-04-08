@@ -4,7 +4,7 @@ import numpy as np
 import math
 import random
 
-import main
+import numberplateRec
 import imageProcess
 import classPossibleChar
 
@@ -41,7 +41,7 @@ except:
 
 #Set modellen op.
 kNearest = cv2.ml.KNearest_create()
-classifications = classifications.reshape((classifications.size, 1))
+labels = labels.reshape((labels.size, 1))
 kNearest.setDefaultK(3)
 kNearest.train(flattenedImages, cv2.ml.ROW_SAMPLE, labels)
 
@@ -256,7 +256,7 @@ def recognizeCharsInPlate(imgThressholded, listOfMatchingChars):
         #Tegn regtangler rundt om de forskellige chars
         pt1 = (currentChar.boundingRectX, currentChar.boundingRectY)
         pt2 = ((currentChar.boundingRectX + currentChar.boundingRectWidth), (currentChar.boundingRectY + currentChar.boundingRectHeight))
-        cv2.rectangle(imgThresholdedColor, pt1, pt2, main.COLOR_GREEN, 2)
+        cv2.rectangle(imgThresholdedColor, pt1, pt2, numberplateRec.COLOR_GREEN, 2)
 
         #Klip det enkelte char ud til genkendelse
         imgchar = imgThressholded[currentChar.boundingRectY : currentChar.boundingRectY + currentChar.boundingRectHeight,

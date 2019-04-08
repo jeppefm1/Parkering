@@ -1,105 +1,53 @@
-import cv2
+import numberplateRec
 import numpy as np
-import os
+import datetime
+import mysql.connector
 
-import findChars
-import findPlates
-import classPossiblePlate
+IMAGE =  "Billeder/5.png"
+ENTID = 1
+MODE = "EXIT"
 
-IMAGE =  "Billeder/6.png"
-
-COLOR_BLACK = (0.0, 0.0, 0.0)
-COLOR_WHITE = (255.0, 255.0, 255.0)
-COLOR_YELLOW = (0.0, 255.0, 255.0)
-COLOR_GREEN = (0.0, 255.0, 0.0)
-COLOR_RED = (0.0, 0.0, 255.0)
-
+db = mysql.connector.connect(
+  host="35.228.118.25",
+  user="Python",
+  passwd="84n$RmH8kQ*g",
+  database="Data")
 
 def main():
-    #Indlæs billede
-    image  = cv2.imread(IMAGE)
+    numberplate = numberplateRec.main(IMAGE)
+    print("Nummerplade fundet: ", numberplate)
 
-    #Anvend egne funktioner til at finde mulige nummerplader og chars
-    listOfPossiblePlates = findPlates.findPlatesInImg(image)
-    listOfPossiblePlates = findChars.detectCharsInPlates(listOfPossiblePlates)
+    if(MODE == "ENTER"):
+        addToEnteredLog(numberplate)
+    elif (MODE == "EXIT"):
+        addToExitLog(numberplate)
 
-    #Vis billede
-    cv2.imshow("Billede", image)
 
-    #Check om der blev fundet nummerplaer
-    if len(listOfPossiblePlates) == 0:
-        print("\nIngen nummerplader blev opdaget\n")
-    else:
-        #Sorter mulige nummerplader efter længde. Her kommer den længste nummerplade først.
-        #Til sorteringen anvendes en lamda funktion, der finder længden af nummerpladen
-        listOfPossiblePlates.sort(key = lambda possiblePlate: len(possiblePlate.charsInPlate), reverse = True)
+def addToEnteredLog(numberplate):
+    #Tilføj nummerplade til indkørsel log
+    sql_insert_query = "INSERT INTO main_log (numberplate, entered, entid) VALUES ('{}', CURRENT_TIME(), {});".format(numberplate, ENTID)
+    cursor = db.cursor()
+    result  = cursor.execute(sql_insert_query)
+    db.commit()
+    return
 
-        #Antag at den længste nummerplade er den korrekte
-        licPlate = listOfPossiblePlates[0]
-        #Vis nummerpladen og thresshold billedet
-        cv2.imshow("imgPlate", licPlate.imgPlate)
-        cv2.imshow("imgThresh", licPlate.imgThressholded)
+def addToExitLog(numberplate):
+    #Find det nyeste ID i loggen for bilens indkørsel
+    cursor = db.cursor()
+    sql_select_query = "SELECT `id` FROM main_log WHERE numberplate = '{}' ORDER BY `id` DESC LIMIT 1; ".format(numberplate)
+    cursor.execute(sql_select_query)
+    result = cursor.fetchone()
 
-        #Hvis ingen chars er genkendt
-        if len(licPlate.charsInPlate) == 0:
-            print("\nIngen chars blev opdaget\n\n")
-            return
+    #TIlføj udkørsel til række i loggen, anvender id fra tidligere forespøgsel
+    sql_update_query = "UPDATE main_log set exited = CURRENT_TIME() where id ='{}'".format(result[0])
+    result  = cursor.execute(sql_update_query)
+    db.commit()
 
-        #Tegn regtangel omkring nummerplade
-        drawRedRectangleAroundPlate(image, licPlate)
-        #Print nummerpladen
-        print("\n Nummerplade genkendt i billede = " + licPlate.charsInPlate + "\n")  # write license plate text to std out
+    #Verificer nummerpladen på hjemmesiden
+    sql_update_query = "UPDATE main_plates set state = 0 where plateNumber ='{}'".format(numberplate)
+    result  = cursor.execute(sql_update_query)
+    db.commit()
+    return
 
-        #Vis nummerpladen på billedet
-        writeLicensePlateCharsOnImage(image, licPlate)
-        cv2.imshow("Nummerplade genkendt", image)
-        #Gem billedet
-        cv2.imwrite("nummerpladeGenkendt.png", image)
-        cv2.waitKey(0)
-        return
-
-#Funktion til at tegne rød regtangel omkring nummerpladen
-def drawRedRectangleAroundPlate(imgOriginalScene, licPlate):
-    centerOfTextAreaX = 0
-    centerOfTextAreaY = 0
-    lowerLeftTextOriginX = 0
-    lowerLeftTextOriginY = 0
-    #Find punkter
-    rectPoints = cv2.boxPoints(licPlate.locationInImg)
-    cv2.line(imgOriginalScene, tuple(rectPoints[0]), tuple(rectPoints[1]), COLOR_RED, 2)
-    cv2.line(imgOriginalScene, tuple(rectPoints[1]), tuple(rectPoints[2]), COLOR_RED, 2)
-    cv2.line(imgOriginalScene, tuple(rectPoints[2]), tuple(rectPoints[3]), COLOR_RED, 2)
-    cv2.line(imgOriginalScene, tuple(rectPoints[3]), tuple(rectPoints[0]), COLOR_RED, 2)
-
-def writeLicensePlateCharsOnImage(image, licPlate):
-    #Henter oplysninger om billedet
-    sceneHeight, sceneWidth, sceneNumChannels = image.shape
-    plateHeight, plateWidth, plateNumChannels = licPlate.imgPlate.shape
-
-    #Instillinger omkring skrifttype og størrelse
-    fontFace = cv2.FONT_HERSHEY_SIMPLEX
-    fontScale = float(plateHeight) / 30.0
-    fontThickness = int(round(fontScale * 1.5))
-    textSize, baseline = cv2.getTextSize(licPlate.charsInPlate, fontFace, fontScale, fontThickness)
-
-    #Hent oplysninger om position i billedet
-    ((plateCenterX, plateCenterY), (plateWidth, plateHeight), correctionAngleInDeg) = licPlate.locationInImg
-    #Konverter til integer
-    plateCenterX = int(plateCenterX)
-    plateCenterY = int(plateCenterY)
-    centerOfTextAreaX = int(plateCenterX)
-
-    #Bestem om teksten skal være under eller over nummerpladen
-    if plateCenterY < (sceneHeight * 0.75):
-        centerOfTextAreaY = int(round(plateCenterY)) + int(round(plateHeight * 1.6))
-    else:
-        centerOfTextAreaY = int(round(plateCenterY)) - int(round(plateHeight * 1.6))
-
-    textSizeWidth, textSizeHeight = textSize
-    lowerLeftTextOriginX = int(centerOfTextAreaX - (textSizeWidth / 2))
-    lowerLeftTextOriginY = int(centerOfTextAreaY + (textSizeHeight / 2))
-    #Tegn tekst på billedet
-    cv2.putText(image, licPlate.charsInPlate, (lowerLeftTextOriginX, lowerLeftTextOriginY), fontFace, fontScale, COLOR_YELLOW, fontThickness)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

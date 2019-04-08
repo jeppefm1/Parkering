@@ -3,7 +3,7 @@ import numpy as np
 import math
 import random
 
-import main
+import numberplateRec
 import imageProcess
 import findChars
 import classPossiblePlate
