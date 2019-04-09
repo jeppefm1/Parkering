@@ -65,6 +65,8 @@ LANGUAGES = (
     ('da', _('Dansk')),
 )
 
+LOGIN_URL = '/main/login/'
+
 ROOT_URLCONF = 'Parkeringshus.urls'
 SITE_ID = 1
 
@@ -130,7 +132,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Copenhagen'
 
 USE_I18N = True
 
