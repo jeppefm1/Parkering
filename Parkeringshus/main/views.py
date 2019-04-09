@@ -1,22 +1,35 @@
+### Views er det som koder al Django/Python koden (altså modeller og formularer) ###
+# sammen med HTML-koden. Det er nødvendigt, da views skaber sammenhæng og giver
+# HTML en kontekst, som gør det muligt at bruge Django-funktioner på siderne.
+###                                                                              ###
+
+
+# Henvisninger til sider
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+# De modeller og formularer som bliver brugt
 from .models import Contact, Plates, Log, ParkingEntity
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout, authenticate
-from django.contrib import messages
 from .forms import NewUserForm, PlateForm
-from datetime import datetime
+from django.contrib.auth import login, logout, authenticate
 from django.views.generic.edit import DeleteView
+# Til at vise beskeder, f.eks. når man logger ind
+from django.contrib import messages
+# Datetime til at holde øje med tiden
+from datetime import datetime
 
-# Create your views here.
+# Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
+# den vide 
 def homepage(request):
     current_user = request.user
     uid = current_user.id
     if current_user.is_authenticated:
         return render(request=request,
                       template_name="main/home.html",
-                      context={"plates":Plates.objects.filter(userid=uid),"logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),"now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
+                      context={"plates":Plates.objects.filter(userid=uid),
+                      "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),
+                      "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
     else: return render(request=request,template_name="main/home.html")
 def register(request):
     if request.method == "POST":

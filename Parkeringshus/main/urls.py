@@ -1,4 +1,7 @@
+# urls.py indeholder informationer om hvilket 'view' serveren skal sende til
+# browseren når den efterspørger et bestemt URL
 from django.urls import path, re_path
+# De views som er blevet lavet skal bruges, derfor importeres de
 from . import views
 
 app_name = "main"
