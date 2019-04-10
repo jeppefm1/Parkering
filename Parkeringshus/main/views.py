@@ -11,13 +11,15 @@ from django.urls import reverse, reverse_lazy
 # De modeller og formularer som bliver brugt
 from .models import Contact, Plates, Log, ParkingEntity
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import NewUserForm, PlateForm
+from .forms import NewUserForm, PlateForm, ContactFormAnon, ContactFormUser
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic.edit import DeleteView
 # Til at vise beskeder, f.eks. når man logger ind
 from django.contrib import messages
 # Datetime til at holde øje med tiden
 from datetime import datetime
+# Skal kunne sende mails
+from django.core.mail import send_mail, BadHeaderError
 
 #Til at sende emails
 from django.core.mail import send_mail, EmailMessage
@@ -102,7 +104,40 @@ def login_request(request):
                     context={"form":form})
 
 def support(request):
-    return render(request, 'main/support.html')
+    current_user = request.user
+    if request.method == 'GET':
+        if current_user.is_authenticated:
+            form = ContactFormUser
+        else:
+            form = ContactFormAnon()
+    else:
+        if current_user.is_authenticated:
+            form = ContactFormUser(request.POST)
+            if form.is_valid():
+                subject = form.cleaned_data['subject']
+                message = form.cleaned_data['message']
+                input = "Fra: {}\nEmne: {}\nBesked:\n{}\nSendt {}".format(current_user.id,subject,message,datetime.now())
+                try:
+                    send_mail("Ny besked: " + subject, input, str(current_user.id)+"@parkering.tk", ['parkeringtk@gmail.com'])
+                except BadHeaderError:
+                    return HttpResponse('Invalid header found.')
+        else:
+            form = ContactFormAnon(request.POST)
+            if form.is_valid():
+                subject = form.cleaned_data['subject']
+                message = form.cleaned_data['message']
+                name = form.cleaned_data['name']
+                from_mail = form.cleaned_data['mail']
+                input = "Fra mail: {}\nNavn: {}\nEmne: {}\nBesked:\n{}\nSendt {}".format(from_mail,name,subject,message,datetime.now())
+                try:
+                    send_mail(subject, input, from_mail, ['parkeringtk@gmail.com'])
+                except BadHeaderError:
+                    return HttpResponse('Invalid header found.')
+
+        return redirect('/support')
+        messages.success(request, f"Din besked er blevet sendt.")
+    return render(request, "main/support.html", {'form': form})
+
 
 def addplate(request):
     current_user = request.user
