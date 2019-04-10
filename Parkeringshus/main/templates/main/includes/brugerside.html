@@ -8,9 +8,9 @@
         <li>
           <div class="collapsible-header"><i class="material-icons">schedule</i><b>{{log.numberplate}}</b>: {{log.entered}}</div>
           <div class="collapsible-body"><span>Bilen med nummerpladen <b>{{log.numberplate}}</b> kørte ind i parkeringshuset {% for house in parkplace %}{% if house.id == log.entid %}
-          <b>{{house.name}}</b>{% endif %}{% endfor %} den {{log.entered.day}}/{{log.entered.month}} klokken {{log.entered.hour}}:{{log.entered.minute}}..<br><br>
+          <b>{{house.name}}</b>{% endif %}{% endfor %} {{log.entered|date:"l"}} den {{log.entered.day}}. {{log.entered|date:"F"}}, klokken {{log.entered|date:"G"}}:{{log.entered|date:"M"}}.<br><br>
           <ul>
-            <li><b>Ankomst:</b> {{log.entered}}</li>
+            <li><b>Ankomst:</b> {{log.entered}}</li>1
             <li><b>Varighed:</b> {{ log.entered|timesince:now }}</li>
             {% for house in parkplace %}{% if house.id == log.entid %}
             <li><b>Takst i {{house.name}}:</b> {{house.hourlyRate}} kroner per påbegyndt time</li>
@@ -21,8 +21,8 @@
         <li>
           <div class="collapsible-header"><i class="material-icons">check_circle</i><b>{{log.numberplate}}</b>: {{log.entered}}</div>
           <div class="collapsible-body"><span>Bilen med nummerpladen <b>{{log.numberplate}}</b> kørte ind i parkeringshuset {% for house in parkplace %}{% if house.id == log.entid %}
-          <b>{{house.name}}</b>{% endif %}{% endfor %} den {{log.entered.day}}/{{log.entered.month}} klokken {{log.entered.hour}}:{{log.entered.minute}}.
-          Bilen kørte ud igen den {{log.exited.day}}/{{log.exited.month}} klokken {{log.exited.hour}}:{{log.exited.minute}}.<br><br>
+          <b>{{house.name}}</b>{% endif %}{% endfor %} {{log.entered|date:"l"}} den {{log.entered.day}}. {{log.entered|date:"F"}}, klokken {{log.entered|date:"G"}}:{{log.entered|date:"i"}}.
+          Bilen kørte ud igen {{log.exited|date:"l"}} den {{log.exited.day}}. {{log.exited|date:"F"}}, klokken {{log.exited|date:"G"}}:{{log.exited|date:"i"}}.<br><br>
           <ul>
             <li><b>Ankomst:</b> {{log.entered}}</li>
             <li><b>Udkørsel:</b> {{log.exited}}</li>
