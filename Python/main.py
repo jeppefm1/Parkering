@@ -7,12 +7,12 @@ import msvcrt as m
 IMAGE =  "Billeder/"
 ENTID = 1
 MODE = "EXIT"
-PI = False
+# PI = False
 
-if (PI == True):
-    import LCD
-    #Klargør display
-    lcd.lcd_init()
+# if (PI == True):
+#     import LCD
+#     #Klargør display
+#     lcd.lcd_init()
 
 db = mysql.connector.connect(
   host="35.228.118.25",
@@ -31,29 +31,28 @@ def main():
             if(MODE == "ENTER"):
                 addToEnteredLog(numberplate)
                 print("Nummerplade tilføjet til indkørsel log \n \n")
-                if (PI == True and numberplate == ""):
-                    lcd_string("Velkommen til",LCD_LINE_1)
-                    lcd_string("Parkering.tk",LCD_LINE_2)
-                elif (PI == True):
-                     lcd_string("Nummerplade",LCD_LINE_1)
-                     lcd_string("fundet: " + numberplate,LCD_LINE_2)
-                     time.sleep(5)
-                     numberplate=""
+                # if (PI == True and numberplate == ""):
+                #     lcd_string("Velkommen til",LCD_LINE_1)
+                #     lcd_string("Parkering.tk",LCD_LINE_2)
+                # elif (PI == True):
+                #      lcd_string("Nummerplade",LCD_LINE_1)
+                #      lcd_string("fundet: " + numberplate,LCD_LINE_2)
+                #      time.sleep(5)
+                #      numberplate=""
 
-            elif (MODE == "EXIT"):
+            if(MODE == "EXIT"):
                 addToExitLog(numberplate)
                 print("Nummerplade tilføjet til udkørsel log \n \n")
-                if (PI == True and numberplate == ""):
-                    lcd_string("Vi ses igen :D",LCD_LINE_1)
-                    lcd_string("Parkering.tk",LCD_LINE_2)
-                elif (PI == True):
-                     lcd_string("Nummerplade",LCD_LINE_1)
-                     lcd_string("fundet: " + numberplate,LCD_LINE_2)
-                     time.sleep(5)
-                     numberplate=""
-
-        except Exception as e:
-            pass
+                # if (PI == True and numberplate == ""):
+                #     lcd_string("Vi ses igen :D",LCD_LINE_1)
+                #     lcd_string("Parkering.tk",LCD_LINE_2)
+                # elif (PI == True):
+                #      lcd_string("Nummerplade",LCD_LINE_1)
+                #      lcd_string("fundet: " + numberplate,LCD_LINE_2)
+                #      time.sleep(5)
+                #      numberplate=""
+        except AttributeError as e:
+            print(e)
 
 
 def addToEnteredLog(numberplate):
