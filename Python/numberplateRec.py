@@ -7,7 +7,7 @@ import findPlates
 import classPossiblePlate
 
 
-DISPLAY_PLATE = True
+DISPLAY_PLATE = False
 COLOR_YELLOW = (0.0, 255.0, 255.0)
 COLOR_GREEN = (0.0, 255.0, 0.0)
 COLOR_RED = (0.0, 0.0, 255.0)

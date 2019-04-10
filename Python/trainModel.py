@@ -39,7 +39,7 @@ else:
     #Array til at gemme labels
     imgClassifications = []
 
-    intValidChars = [ord('0'), ord('1'), ord('2'), ord('3'), ord('4'), ord('5'), ord('6'), ord('7'), ord('8'), ord('9'),
+    validChars = [ord('0'), ord('1'), ord('2'), ord('3'), ord('4'), ord('5'), ord('6'), ord('7'), ord('8'), ord('9'),
                      ord('A'), ord('B'), ord('C'), ord('D'), ord('E'), ord('F'), ord('G'), ord('H'), ord('I'), ord('J'),
                      ord('K'), ord('L'), ord('M'), ord('N'), ord('O'), ord('P'), ord('Q'), ord('R'), ord('S'), ord('T'),
                      ord('U'), ord('V'), ord('W'), ord('X'), ord('Y'), ord('Z')]
@@ -59,10 +59,10 @@ else:
             cv2.imshow("Behandlet kontour", contourProcessedResized)
             cv2.imshow("Dataopsamling", imgTrainingData)
             #Venter på bruger, der klassificerer kontour
-            intChar = cv2.waitKey(0)
+            char = cv2.waitKey(0)
             #print("IntChar", intChar)
             #Chekker om keyboard input er et muligt input i listen med gyldige tegn.
-            if(intChar in intValidChars):
+            if(char in validChars):
                 print("Valid char found")
                 #Gemmer label i listen med labels
                 imgClassifications.append(intChar)

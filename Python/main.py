@@ -2,10 +2,17 @@ import numberplateRec
 import numpy as np
 import datetime
 import mysql.connector
+import msvcrt as m
 
-IMAGE =  "Billeder/5.png"
+IMAGE =  "Billeder/"
 ENTID = 1
 MODE = "EXIT"
+PI = False
+
+if (PI == True):
+    import LCD
+    #Klargør display
+    lcd.lcd_init()
 
 db = mysql.connector.connect(
   host="35.228.118.25",
@@ -14,13 +21,39 @@ db = mysql.connector.connect(
   database="Data")
 
 def main():
-    numberplate = numberplateRec.main(IMAGE)
-    print("Nummerplade fundet: ", numberplate)
+    print("Tryk på mellemrum for at lede efter nummerplade")
+    while True:
+        char = input("Hvilket billede ønsker du at genkede? \n Billede: ")
+        try:
+            numberplate = numberplateRec.main(IMAGE + char + ".png")
+            print("Nummerplade fundet: ", numberplate)
 
-    if(MODE == "ENTER"):
-        addToEnteredLog(numberplate)
-    elif (MODE == "EXIT"):
-        addToExitLog(numberplate)
+            if(MODE == "ENTER"):
+                addToEnteredLog(numberplate)
+                print("Nummerplade tilføjet til indkørsel log \n \n")
+                if (PI == True and numberplate == ""):
+                    lcd_string("Velkommen til",LCD_LINE_1)
+                    lcd_string("Parkering.tk",LCD_LINE_2)
+                elif (PI == True):
+                     lcd_string("Nummerplade",LCD_LINE_1)
+                     lcd_string("fundet: " + numberplate,LCD_LINE_2)
+                     time.sleep(5)
+                     numberplate=""
+
+            elif (MODE == "EXIT"):
+                addToExitLog(numberplate)
+                print("Nummerplade tilføjet til udkørsel log \n \n")
+                if (PI == True and numberplate == ""):
+                    lcd_string("Vi ses igen :D",LCD_LINE_1)
+                    lcd_string("Parkering.tk",LCD_LINE_2)
+                elif (PI == True):
+                     lcd_string("Nummerplade",LCD_LINE_1)
+                     lcd_string("fundet: " + numberplate,LCD_LINE_2)
+                     time.sleep(5)
+                     numberplate=""
+
+        except Exception as e:
+            pass
 
 
 def addToEnteredLog(numberplate):
