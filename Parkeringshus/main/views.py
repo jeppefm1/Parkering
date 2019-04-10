@@ -21,6 +21,12 @@ from datetime import datetime
 # Skal kunne sende mails
 from django.core.mail import send_mail, BadHeaderError
 
+#Til at sende emails
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
+#Henter mailadresse fra instillingerne
+from django.conf import settings
+
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
 # den vide
 def homepage(request):
@@ -33,6 +39,15 @@ def homepage(request):
                       "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),
                       "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
     else: return render(request=request,template_name="main/home.html")
+
+#Funktion til at sende html emails
+def send_html_email(to_list, subject, template_name, context, sender=settings.DEFAULT_FROM_EMAIL):
+    msg_html = render_to_string(template_name, context)
+    msg = EmailMessage(subject=subject, body=msg_html, from_email=sender, bcc=to_list)
+    msg.content_subtype = "html"  # Main content is now text/html
+    return msg.send()
+
+
 def register(request):
     if request.method == "POST":
         form = NewUserForm(request.POST)
@@ -40,6 +55,15 @@ def register(request):
             user = form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f"Kontoen {username} er nu blevet oprettet.")
+
+            #Send velkomsts mail
+            template_name="main/velkomstMail.html"
+            to_list = [form.cleaned_data.get('email')]
+            subject = "Velkommen til Parkering.tk"
+            context = {'username': username}
+            send_html_email(to_list, subject, template_name, context, sender=settings.DEFAULT_FROM_EMAIL)
+
+
             login(request, user)
             messages.info(request, f"Du er nu logget ind med {username}.")
             return redirect("main:homepage")
