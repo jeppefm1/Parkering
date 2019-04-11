@@ -18,7 +18,6 @@ LiquidCrystal_I2C  lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin,
 Servo servo;
 
 String numberplate = "";
-int posServo = 0;
 
 void setup()
 {
@@ -43,10 +42,8 @@ void loop()
     lcd.setCursor(0, 1);
     lcd.print(numberplate);
     servo.write(90);
-    posServo = 90;
     delay(10000);
     servo.write(0);
-    posServo = 0;
     lcd.clear();
   }
   else {
