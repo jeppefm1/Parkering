@@ -1,11 +1,17 @@
 import numberplateRec
 import numpy as np
 import datetime
+from serial import Serial
 import mysql.connector
 import cv2
+import time
 
 ENTID = 1
 MODE = "ENTER"
+
+#Åbner serial port
+serial = Serial('COM7', 9600, timeout=1)
+time.sleep(2)
 
 db = mysql.connector.connect(
   host="35.228.118.25",
@@ -41,20 +47,24 @@ def main():
 
                 #Undersøg det gemte frame for nummerplader
                 numberplate = numberplateRec.main("opencv_frame.png")
-                if (numberplateRec.licPlate != 0):
+                if (numberplate != None):
                     print("Nummerplade fundet: ", numberplate)
 
                 #Hvis nummerplade fundet og mode er ENTER gem i indkørsel log
                 if(MODE == "ENTER"):
-                    if (numberplateRec.licPlate != 0):
+                    if (numberplate != None):
                         addToEnteredLog(numberplate)
                         print("Nummerplade tilføjet til indkørsel log \n \n")
+                        #Sender nummerplade til arduino
+                        arduino(numberplate)
 
                 #Hvis nummerplade fundet og mode er EXIT gem i udkørsel log
                 if(MODE == "EXIT"):
-                    if (numberplateRec.licPlate != 0):
+                    if (numberplate != None):
                         addToExitLog(numberplate)
                         print("Nummerplade tilføjet til udkørsel log \n \n")
+                        #Sender nummerplade til arduino
+                        arduino(numberplate)
 
                 cam = cv2.VideoCapture(0)
                 cv2.namedWindow("Leder efter nummerplade")
@@ -62,6 +72,10 @@ def main():
         except AssertionError as e:
             print(e)
 
+def arduino(numberplate):
+    encode = str('{}\n'.format(numberplate)).encode('UTF-8')
+    serial.write(encode)
+    print("Har sendt følgende til arduino: ", encode)
 
 def addToEnteredLog(numberplate):
     #Tilføj nummerplade til indkørsel log
@@ -91,3 +105,4 @@ def addToExitLog(numberplate):
 
 if __name__ == '__main__':
     main()
+    ser.close()
