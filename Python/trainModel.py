@@ -60,7 +60,6 @@ else:
             cv2.imshow("Dataopsamling", imgTrainingData)
             #Venter på bruger, der klassificerer kontour
             char = cv2.waitKey(0)
-            #print("IntChar", intChar)
             #Chekker om keyboard input er et muligt input i listen med gyldige tegn.
             if(char in validChars):
                 print("Valid char found")
