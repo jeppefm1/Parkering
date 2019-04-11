@@ -2,17 +2,10 @@ import numberplateRec
 import numpy as np
 import datetime
 import mysql.connector
-import msvcrt as m
+import cv2
 
-IMAGE =  "Billeder/"
 ENTID = 1
-MODE = "EXIT"
-# PI = False
-
-# if (PI == True):
-#     import LCD
-#     #Klargør display
-#     lcd.lcd_init()
+MODE = "ENTER"
 
 db = mysql.connector.connect(
   host="35.228.118.25",
@@ -21,37 +14,52 @@ db = mysql.connector.connect(
   database="Data")
 
 def main():
-    print("Tryk på mellemrum for at lede efter nummerplade")
+    #Tænder webcam
+    cam = cv2.VideoCapture(0)
+    cv2.namedWindow("Leder efter nummerplade")
+
     while True:
-        char = input("Hvilket billede ønsker du at genkede? \n Billede: ")
         try:
-            numberplate = numberplateRec.main(IMAGE + char + ".png")
-            print("Nummerplade fundet: ", numberplate)
+            #Hvis der trykkes på mellemrum skal det nuværende frame gemmes.
+            read, frame = cam.read()
+            cv2.imshow("Leder efter nummerplade", frame)
+            if not read:
+                break
+            k = cv2.waitKey(1)
 
-            if(MODE == "ENTER"):
-                addToEnteredLog(numberplate)
-                print("Nummerplade tilføjet til indkørsel log \n \n")
-                # if (PI == True and numberplate == ""):
-                #     lcd_string("Velkommen til",LCD_LINE_1)
-                #     lcd_string("Parkering.tk",LCD_LINE_2)
-                # elif (PI == True):
-                #      lcd_string("Nummerplade",LCD_LINE_1)
-                #      lcd_string("fundet: " + numberplate,LCD_LINE_2)
-                #      time.sleep(5)
-                #      numberplate=""
+            if k%256 == 27:
+                # ESC pressed
+                print("Escape hit, closing...")
+                break
+            elif k%256 == 32:
+                # SPACE pressed
+                img_name = "opencv_frame.png"
+                cv2.imwrite(img_name, frame)
+                print("{} written!".format(img_name))
+                cam.release()
+                cv2.destroyAllWindows()
 
-            if(MODE == "EXIT"):
-                addToExitLog(numberplate)
-                print("Nummerplade tilføjet til udkørsel log \n \n")
-                # if (PI == True and numberplate == ""):
-                #     lcd_string("Vi ses igen :D",LCD_LINE_1)
-                #     lcd_string("Parkering.tk",LCD_LINE_2)
-                # elif (PI == True):
-                #      lcd_string("Nummerplade",LCD_LINE_1)
-                #      lcd_string("fundet: " + numberplate,LCD_LINE_2)
-                #      time.sleep(5)
-                #      numberplate=""
-        except AttributeError as e:
+                #Undersøg det gemte frame for nummerplader
+                numberplate = numberplateRec.main("opencv_frame.png")
+                if (numberplateRec.licPlate != 0):
+                    print("Nummerplade fundet: ", numberplate)
+
+                #Hvis nummerplade fundet og mode er ENTER gem i indkørsel log
+                if(MODE == "ENTER"):
+                    if (numberplateRec.licPlate != 0):
+                        addToEnteredLog(numberplate)
+                        print("Nummerplade tilføjet til indkørsel log \n \n")
+
+                #Hvis nummerplade fundet og mode er EXIT gem i udkørsel log
+                if(MODE == "EXIT"):
+                    if (numberplateRec.licPlate != 0):
+                        addToExitLog(numberplate)
+                        print("Nummerplade tilføjet til udkørsel log \n \n")
+
+                cam = cv2.VideoCapture(0)
+                cv2.namedWindow("Leder efter nummerplade")
+
+        except AssertionError as e:
             print(e)
 
 
