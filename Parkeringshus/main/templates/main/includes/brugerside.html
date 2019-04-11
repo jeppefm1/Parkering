@@ -8,10 +8,9 @@
         <li>
           <div class="collapsible-header"><i class="material-icons">schedule</i><b>{{log.numberplate}}</b>: {{log.entered}}</div>
           <div class="collapsible-body"><span>Bilen med nummerpladen <b>{{log.numberplate}}</b> kørte ind i parkeringshuset {% for house in parkplace %}{% if house.id == log.entid %}
-          <b>{{house.name}}</b>{% endif %}{% endfor %} {{log.entered|date:"l"}} den {{log.entered.day}}. {{log.entered|date:"F"}}, klokken {{log.entered|date:"G"}}:{{log.entered|date:"M"}}.<br><br>
+          <b>{{house.name}}</b>{% endif %}{% endfor %} {{log.entered|date:"l"}} den {{log.entered.day}}. {{log.entered|date:"F"}}, klokken {{log.entered|date:"G"}}:{{log.entered|date:"i"}}.<br><br>
           <ul>
-            <li><b>Ankomst:</b> {{log.entered}}</li>1
-            <li><b>Varighed:</b> {{ log.entered|timesince:now }}</li>
+            <li><b>Ankomst:</b> {{log.entered}}</li>
             {% for house in parkplace %}{% if house.id == log.entid %}
             <li><b>Takst i {{house.name}}:</b> {{house.hourlyRate}} kroner per påbegyndt time</li>
             {% endif %}{% endfor %}

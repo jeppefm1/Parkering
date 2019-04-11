@@ -3,7 +3,7 @@
 # HTML en kontekst, som gør det muligt at bruge Django-funktioner på siderne.
 ###                                                                              ###
 
-
+import numpy as np
 # Henvisninger til sider
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -29,6 +29,12 @@ from django.conf import settings
 
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
 # den vide
+
+
+def rm_dups(nums):
+    set(tuple(element) for element in nums)
+    return [list(t) for t in set(tuple(element) for element in nums)]
+
 def homepage(request):
     current_user = request.user
     uid = current_user.id
@@ -36,7 +42,7 @@ def homepage(request):
         return render(request=request,
                       template_name="main/home.html",
                       context={"plates":Plates.objects.filter(userid=uid),
-                      "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')),
+                      "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')).order_by('-entered'),
                       "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
     else: return render(request=request,template_name="main/home.html")
 
@@ -155,6 +161,28 @@ def addplate(request):
     return render(request = request,
                   template_name = "main/addplate.html",
                   context={"form":form,"plates":Plates.objects.all,"uid":current_user.id})
+
+def faktura(request):
+    current_user = request.user
+    uid = current_user.id
+    if current_user.is_authenticated:
+        logs = Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')).order_by('-id')
+        log_times = logs.values('exited')
+        log_periods = []
+        for time in log_times:
+            time = time['exited']
+            if time != None:
+                log_periods.append([time.year,time.month])
+        periods = rm_dups(log_periods)
+        print(periods)
+
+        return render(request=request,
+                      template_name="main/faktura.html",
+                      context={"plates":Plates.objects.filter(userid=uid),
+                      "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')).order_by('-id'),
+                      "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all,"years":[2018,2019,2020],"months":[1,2,3,4,5,6,7,8,9,10,11,12],
+                      "periods":periods,"yR":range(30),"mR":range(13)})
+    else: return render(request=request,template_name="main/faktura.html")
 
 class deleteplate(DeleteView):
     model = Plates

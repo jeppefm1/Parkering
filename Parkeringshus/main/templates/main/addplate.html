@@ -9,7 +9,7 @@
         {% if plate.state == 0 %}
           <li>
             <div class="collapsible-header"><i class="material-icons">done</i><b>Bekræftet</b>: {{plate.plateNumber}}</div>
-            <div class="collapsible-body"><span>Tilføjet: {{plate.add_date}}<br>Historik: tryk her</span></div>
+            <div class="collapsible-body"><span>Tilføjet: {{plate.add_date}}<br>Historik: <a href="/">tryk her</a></span></div>
           </li>
         {% elif plate.state == 1 %}
           <li>
