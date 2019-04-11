@@ -7,11 +7,11 @@ import findPlates
 import classPossiblePlate
 
 
-DISPLAY_PLATE = False
+DISPLAY_PLATE = True
 COLOR_YELLOW = (0.0, 255.0, 255.0)
 COLOR_GREEN = (0.0, 255.0, 0.0)
 COLOR_RED = (0.0, 0.0, 255.0)
-
+licPlate = 0
 
 def main(IMAGE):
     #Indlæs billede
@@ -26,9 +26,7 @@ def main(IMAGE):
         cv2.imshow("Billede", image)
 
     #Check om der blev fundet nummerplaer
-    if len(listOfPossiblePlates) == 0:
-        print("\nIngen nummerplader blev opdaget\n")
-    else:
+    if len(listOfPossiblePlates) != 0:
         #Sorter mulige nummerplader efter længde. Her kommer den længste nummerplade først.
         #Til sorteringen anvendes en lamda funktion, der finder længden af nummerpladen
         listOfPossiblePlates.sort(key = lambda possiblePlate: len(possiblePlate.charsInPlate), reverse = True)
