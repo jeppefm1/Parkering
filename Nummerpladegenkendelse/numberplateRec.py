@@ -6,8 +6,7 @@ import findChars
 import findPlates
 import classPossiblePlate
 
-
-DISPLAY_PLATE = False
+DISPLAY_PLATE = True
 COLOR_YELLOW = (0.0, 255.0, 255.0)
 COLOR_GREEN = (0.0, 255.0, 0.0)
 COLOR_RED = (0.0, 0.0, 255.0)
@@ -59,17 +58,17 @@ def main(IMAGE):
         return licPlate.charsInPlate
 
 #Funktion til at tegne rød regtangel omkring nummerpladen
-def drawRedRectangleAroundPlate(imgOriginalScene, licPlate):
+def drawRedRectangleAroundPlate(originalScene, licPlate):
     centerOfTextAreaX = 0
     centerOfTextAreaY = 0
     lowerLeftTextOriginX = 0
     lowerLeftTextOriginY = 0
     #Find punkter
     rectPoints = cv2.boxPoints(licPlate.locationInImg)
-    cv2.line(imgOriginalScene, tuple(rectPoints[0]), tuple(rectPoints[1]), COLOR_RED, 2)
-    cv2.line(imgOriginalScene, tuple(rectPoints[1]), tuple(rectPoints[2]), COLOR_RED, 2)
-    cv2.line(imgOriginalScene, tuple(rectPoints[2]), tuple(rectPoints[3]), COLOR_RED, 2)
-    cv2.line(imgOriginalScene, tuple(rectPoints[3]), tuple(rectPoints[0]), COLOR_RED, 2)
+    cv2.line(originalScene, tuple(rectPoints[0]), tuple(rectPoints[1]), COLOR_RED, 2)
+    cv2.line(originalScene, tuple(rectPoints[1]), tuple(rectPoints[2]), COLOR_RED, 2)
+    cv2.line(originalScene, tuple(rectPoints[2]), tuple(rectPoints[3]), COLOR_RED, 2)
+    cv2.line(originalScene, tuple(rectPoints[3]), tuple(rectPoints[0]), COLOR_RED, 2)
 
 def writeLicensePlateCharsOnImage(image, licPlate):
     #Henter oplysninger om billedet
