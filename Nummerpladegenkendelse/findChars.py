@@ -236,7 +236,7 @@ def removeElementOfOverlappingChars(listOfMatchingChars):
                             listOfMatchingCharsOverlappingResolved.remove(otherChar)
     return listOfMatchingCharsOverlappingResolved
 
-#Funktion til at genkende chars i billedet. Hertil anvendes SVM modellen, der blev trænet tidligere.
+#Funktion til at genkende chars i billedet. Hertil anvendes KNN modellen, der defineret tidligere.
 def recognizeCharsInPlate(imgThressholded, listOfMatchingChars):
     charsCombined = ""
 

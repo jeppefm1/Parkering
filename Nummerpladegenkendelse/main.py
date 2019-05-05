@@ -105,4 +105,4 @@ def addToExitLog(numberplate):
 
 if __name__ == '__main__':
     main()
-    ser.close()
+    serial.close()
