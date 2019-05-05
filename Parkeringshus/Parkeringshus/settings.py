@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'main.templatetags.app_filters',
     'django.contrib.sites',
     'django.contrib.humanize',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
