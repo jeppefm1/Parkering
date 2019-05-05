@@ -8,7 +8,7 @@ app_name = "main"
 
 urlpatterns = [
 	path('', views.homepage, name="homepage"),
-	path('faktura', views.faktura, name="faktura"),
+	path('total/', views.totalStats, name="totalStats"),
 	path('registrer/', views.register, name="registrer"),
 	path('logout/', views.logout_request, name="logout"),
 	path('support/', views.support, name="login"),

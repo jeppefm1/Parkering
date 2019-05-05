@@ -27,6 +27,10 @@ from django.template.loader import render_to_string
 #Henter mailadresse fra instillingerne
 from django.conf import settings
 
+# Til grafer
+import plotly.offline as py
+import plotly.graph_objs as go
+
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
 # den vide
 
@@ -162,27 +166,106 @@ def addplate(request):
                   template_name = "main/addplate.html",
                   context={"form":form,"plates":Plates.objects.all,"uid":current_user.id})
 
-def faktura(request):
+def totalStats(request):
     current_user = request.user
     uid = current_user.id
     if current_user.is_authenticated:
-        logs = Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')).order_by('-id')
-        log_times = logs.values('exited')
-        log_periods = []
-        for time in log_times:
-            time = time['exited']
-            if time != None:
-                log_periods.append([time.year,time.month])
-        periods = rm_dups(log_periods)
-        print(periods)
+        # De to QuerySet initialiseres
+        logs = Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber'),exited__isnull=False).order_by('exited')
+        parkplace = ParkingEntity.objects.all()
+        # Variable og lister initialiseres
+        total = 0
+        hours = 0
+
+        x = []
+        y1 = []
+        y2 = []
+        for log in logs:
+            for house in parkplace:
+                if house.id == log.entid:
+                    hourlyRate = house.hourlyRate
+            duration = log.get_time_diff()
+            subtotal = duration * hourlyRate
+
+            # Først adderes det
+            hours += duration
+            total += subtotal
+            # Herefter tilføjes det til et array
+            x.append(log.exited)
+            y1.append(hours)
+            y2.append(total)
+
+        trace_duration = go.Scatter(
+            x=x,
+            y=y1,
+            name = "Varighed",
+            line = dict(color = '#17BECF'),
+            opacity = 0.8,
+            hoverinfo = 'name+y')
+
+        trace_pay = go.Scatter(
+            x=x,
+            y=y2,
+            name = "Beløb",
+            line = dict(color = 'rgb(148, 103, 189)'),
+            opacity = 0.8,
+            yaxis = 'y2',
+            hoverinfo = 'name+y')
+
+        data = [trace_pay,trace_duration]
+
+        layout = dict(
+            title='Samlet beløb og tid',
+            showlegend=False,
+            yaxis=dict(
+                title='Total varighed i timer',
+                titlefont=dict(
+                    color='#17BECF'
+                ),
+                tickfont=dict(
+                    color='#17BECF'
+                ),
+            ),
+            yaxis2=dict(
+                title='Totalt beløb i kroner',
+                titlefont=dict(
+                    color='rgb(148, 103, 189)'
+                ),
+                tickfont=dict(
+                    color='rgb(148, 103, 189)'
+                ),
+                overlaying='y',
+                side='right'
+            ),
+            xaxis=dict(
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1,
+                             label='1m',
+                             step='month',
+                             stepmode='backward'),
+                        dict(count=6,
+                             label='6m',
+                             step='month',
+                             stepmode='backward'),
+                        dict(label='alt',
+                             step='all')
+                    ])
+                ),
+                type='date'
+            )
+        )
+
+        fig = dict(data=data, layout=layout)
+
+        div = py.plot(fig, config={'displayModeBar': False}, auto_open=False, output_type='div')
 
         return render(request=request,
-                      template_name="main/faktura.html",
-                      context={"plates":Plates.objects.filter(userid=uid),
-                      "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')).order_by('-id'),
-                      "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all,"years":[2018,2019,2020],"months":[1,2,3,4,5,6,7,8,9,10,11,12],
-                      "periods":periods,"yR":range(30),"mR":range(13)})
-    else: return render(request=request,template_name="main/faktura.html")
+                      template_name="main/total.html",
+                      context={"plates":Plates.objects.filter(userid=uid),"logs":logs,
+                      "uid":uid,"total":total,"hours":hours,'graph':div})
+    else: return render(request=request,template_name="main/total.html")
+
 
 class deleteplate(DeleteView):
     model = Plates

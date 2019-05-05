@@ -1,0 +1,32 @@
+{% extends 'main/header.html' %}
+{% load app_filters %}{% load humanize %}
+{% block content %}
+<br><br>
+  {% if logs.count > 0 %} <!-- Hvis brugeren har tidligere historik (derved også nummerplade) -->
+    <h2>I alt</h2>
+      <table>
+        <thead>
+          <tr>
+              <th>Total varighed</th>
+              <th>Totalt beløb</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>{{hours}} timer</td>
+            <td>{{total}} kroner</td>
+          </tr>
+        </tbody>
+      </table>
+
+    <h4>Statistik</h4>
+    {% if graph %}
+    <div>
+    {{ graph|safe }}
+    </div>
+    {% endif %}
+  {% else %}
+    Du har endnu ikke brugt din nummerplade i et parkeringshus.
+  {% endif %}
+{% endblock %}
