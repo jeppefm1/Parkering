@@ -29,7 +29,7 @@ RESIZED_CHAR_IMAGE_WIDTH = 30
 RESIZED_CHAR_IMAGE_HEIGHT = 45
 MIN_CONTOUR_AREA = 100
 
-#FIndlæs datasæt
+#Indlæser eget datasæt
 try:
     labels = np.loadtxt("labelStor.txt", np.int32)
     flattenedImages = np.loadtxt("flattened_imagesStor.txt", np.float32)
@@ -38,7 +38,7 @@ except:
     print("Træningsdataen kunne ikke åbnes. Har du klassificeret chars inden?\n")
     os.system("pause")
 
-#Set modellen op.
+#Sætter modellen op.
 kNearest = cv2.ml.KNearest_create()
 labels = labels.reshape((labels.size, 1))
 kNearest.setDefaultK(3)
@@ -150,9 +150,9 @@ def findListOfListsOfMatchingChars(listOfPossibleChars):
         listOfPossibleCharsWithMatchesRemoved = list(set(listOfPossibleChars) - set(listOfMatchingChars))
 
         #Kalder sig selv igen, for at få de andre lister med matchende chars
-        recursiveListOfListsOfMatchingChars = findListOfListsOfMatchingChars(listOfPossibleCharsWithMatchesRemoved)      # recursive call
-        #Looper igennem lister og gemmer i listen med lister.
-        for recursiveListOfMatchingChars in recursiveListOfListsOfMatchingChars:        # for each list of matching chars found by recursive call
+        recursiveListOfListsOfMatchingChars = findListOfListsOfMatchingChars(listOfPossibleCharsWithMatchesRemoved)
+        #For hver liste fundet ved at kalde sig selv. Looper igennem alle lister.
+        for recursiveListOfMatchingChars in recursiveListOfListsOfMatchingChars:
             listOfListsOfMatchingChars.append(recursiveListOfMatchingChars)
         break
     return listOfListsOfMatchingChars

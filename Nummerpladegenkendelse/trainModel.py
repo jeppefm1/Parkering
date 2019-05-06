@@ -43,7 +43,6 @@ else:
                      ord('A'), ord('B'), ord('C'), ord('D'), ord('E'), ord('F'), ord('G'), ord('H'), ord('I'), ord('J'),
                      ord('K'), ord('L'), ord('M'), ord('N'), ord('O'), ord('P'), ord('Q'), ord('R'), ord('S'), ord('T'),
                      ord('U'), ord('V'), ord('W'), ord('X'), ord('Y'), ord('Z')]
-    #print(intValidChars)
     #Loop gennem konturer. Undersøger om konturer ligner bogstaver
     for imgContour in imgContours:
         #Er konturens areal større end minimums bogstavet?
@@ -96,6 +95,7 @@ else:
     cv2.destroyAllWindows()
     print("Data indsamlet - Gemmer data")
 
+    #Gemmer datasæt
     np.savetxt("labelStor.txt", labelsArrayReshaped)
     np.savetxt("flattened_imagesStor.txt", imagesFlattend)
 
