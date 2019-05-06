@@ -33,7 +33,7 @@ class Log(models.Model):
     entid = models.IntegerField(default=1)
 
     def get_time_diff(self):
-        
+
         timediffSec = self.exited - self.entered
         timeDiff = timediffSec.total_seconds() / 3600 # Da det er per time, omregnes der fra sekunder til timer
         return math.ceil(timeDiff) # Da det er per påbegyndt time, skal der rundes op.
@@ -48,3 +48,5 @@ class ParkingEntity(models.Model):
     available = models.IntegerField(default=500)
     address = models.CharField(max_length=30)
     hourlyRate = models.IntegerField(default=8)
+    coords = models.CharField(max_length=100)
+    place = models.CharField(max_length=200)
