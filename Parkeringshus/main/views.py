@@ -179,7 +179,9 @@ def totalStats(request):
 
         x = []
         y1 = []
+        y1change = []
         y2 = []
+        y2change = []
         for log in logs:
             for house in parkplace:
                 if house.id == log.entid:
@@ -193,7 +195,9 @@ def totalStats(request):
             # Herefter tilføjes det til et array
             x.append(log.exited)
             y1.append(hours)
+            y1change.append(duration)
             y2.append(total)
+            y2change.append(subtotal)
 
         trace_duration = go.Scatter(
             x=x,
@@ -202,6 +206,19 @@ def totalStats(request):
             line = dict(color = '#17BECF'),
             opacity = 0.8,
             hoverinfo = 'name+y')
+
+        trace_duration_change = go.Bar(
+            x=x,
+            y=y1change,
+            name = "Varighed",
+            marker=dict(
+                color='#17BECF',
+                line=dict(
+                    color='#17BECF',
+                    width=1.5,
+                )
+            ),
+            opacity = 0.8)
 
         trace_pay = go.Scatter(
             x=x,
@@ -212,13 +229,29 @@ def totalStats(request):
             yaxis = 'y2',
             hoverinfo = 'name+y')
 
-        data = [trace_pay,trace_duration]
+        trace_pay_change = go.Bar(
+            x=x,
+            y=y2change,
+            name = "Beløb",
+            marker=dict(
+                color='rgb(148, 103, 189)',
+                line=dict(
+                    color='rgb(148, 103, 189)',
+                    width=1.5,
+                )
+            ),
+            opacity = 0.8,
+            yaxis = 'y2')
+
+        totalData = [trace_duration,trace_pay]
+        changeData = [trace_duration_change,trace_pay_change]
 
         layout = dict(
-            title='Samlet beløb og tid',
+            title='Beløb og tid',
             showlegend=False,
+            barmode='group',
             yaxis=dict(
-                title='Total varighed i timer',
+                title='Varighed i timer',
                 titlefont=dict(
                     color='#17BECF'
                 ),
@@ -227,7 +260,7 @@ def totalStats(request):
                 ),
             ),
             yaxis2=dict(
-                title='Totalt beløb i kroner',
+                title='Beløb i kroner',
                 titlefont=dict(
                     color='rgb(148, 103, 189)'
                 ),
@@ -256,14 +289,16 @@ def totalStats(request):
             )
         )
 
-        fig = dict(data=data, layout=layout)
+        fig1 = dict(data=totalData, layout=layout)
+        fig2 = dict(data=changeData, layout=layout)
 
-        div = py.plot(fig, config={'displayModeBar': False}, auto_open=False, output_type='div')
+        totalPlot = py.plot(fig1, config={'displayModeBar': False}, auto_open=False, output_type='div')
+        changePlot = py.plot(fig2, config={'displayModeBar': False}, auto_open=False, output_type='div')
 
         return render(request=request,
                       template_name="main/total.html",
-                      context={"plates":Plates.objects.filter(userid=uid),"logs":logs,
-                      "uid":uid,"total":total,"hours":hours,'graph':div})
+                      context={"plates":Plates.objects.filter(userid=uid),"logs":logs,'uid':uid,
+                      "total":total,"hours":hours,'graph1':totalPlot,'graph2':changePlot})
     else: return render(request=request,template_name="main/total.html")
 
 

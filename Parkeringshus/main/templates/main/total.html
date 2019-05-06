@@ -20,13 +20,21 @@
         </tbody>
       </table>
 
-    <h4>Statistik</h4>
-    {% if graph %}
-    <div>
-    {{ graph|safe }}
-    </div>
+    <h3>Statistik</h3>
+    <h4>Totale beløb og varighed</h4>
+    {% if graph1 %}
+      <div>
+      {{ graph1|safe }}
+      </div>
+    {% endif %}
+    <h4>Ændringen i beløb og varighed</h4>
+    {% if graph2 %}
+      <div>
+      {{ graph2|safe }}
+      </div>
     {% endif %}
   {% else %}
     Du har endnu ikke brugt din nummerplade i et parkeringshus.
   {% endif %}
+  {{dat}}
 {% endblock %}
