@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ws)i^so4lrc!*dx+xp4sfj@c%8^ai7*ck#=pf=lw@fd_5dbsm&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'parkering.tk', 'www.parkering.tk', '172.104.131.1', 'localhost', '127.0.0.1', '[::1]',

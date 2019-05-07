@@ -46,9 +46,11 @@ def homepage(request):
         return render(request=request,
                       template_name="main/home.html",
                       context={"plates":Plates.objects.filter(userid=uid),
-                      "logs":Log.objects.filter(numberplate__in=Plates.objects.filter(userid=uid).values('plateNumber')).order_by('-entered'),
-                      "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
-    else: return render(request=request,template_name="main/home.html")
+                              "logs":Log.objects.filter(numberplate__in=Plates.objects.
+                              filter(userid=uid).values('plateNumber')).order_by('-entered'),
+                              "now":datetime.now,"uid":uid,"parkplace":ParkingEntity.objects.all})
+    else: return render(request=request,template_name="main/home.html",context=
+                        {"parkplace":ParkingEntity.objects.all})
 
 #Funktion til at sende html emails
 def send_html_email(to_list, subject, template_name, context, sender=settings.DEFAULT_FROM_EMAIL):
