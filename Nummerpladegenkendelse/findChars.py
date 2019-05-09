@@ -226,7 +226,7 @@ def removeElementOfOverlappingChars(listOfMatchingChars):
                 if distanceBetweenCharsFunction(currentChar, otherChar) < (currentChar.diagonalSize * MIN_DIAG_SIZE_MULTIPLE_AWAY):
                     #Fjern det mindste af to chars der går ind over hinanden
                     if currentChar.boundingRectArea < otherChar.boundingRectArea:
-                        #Checkr om det er blevet fjernet en gang allerede
+                        #Checker om det er blevet fjernet en gang allerede
                         if currentChar in listOfMatchingCharsOverlappingResolved:
                             listOfMatchingCharsOverlappingResolved.remove(currentChar)
                     else:
