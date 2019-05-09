@@ -18,11 +18,8 @@ from django.views.generic.edit import DeleteView
 from django.contrib import messages
 # Datetime til at holde øje med tiden
 from datetime import datetime
-# Skal kunne sende mails
-from django.core.mail import send_mail, BadHeaderError
-
 #Til at sende emails
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
 from django.template.loader import render_to_string
 #Henter mailadresse fra instillingerne
 from django.conf import settings
@@ -32,9 +29,7 @@ import plotly.offline as py
 import plotly.graph_objs as go
 
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
-# den vide
-
-
+# den vide:
 def rm_dups(nums):
     set(tuple(element) for element in nums)
     return [list(t) for t in set(tuple(element) for element in nums)]

@@ -63,7 +63,7 @@ else:
             if(char in validChars):
                 print("Valid char found")
                 #Gemmer label i listen med labels
-                imgClassifications.append(intChar)
+                imgClassifications.append(char)
                 #Gør billedet flat
                 flattendImg = contourProcessedResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))
                 #Gemmer det flade billede i listen med flade billeder
@@ -74,7 +74,7 @@ else:
                 intChar = cv2.waitKey(0)
                 #print("IntChar", intChar)
                 #Chekker om keyboard input er et muligt input i listen med gyldige tegn.
-                if(intChar in intValidChars):
+                if(intChar in validChars):
                     print("Valid char found")
                     #Gemmer label i listen med labels
                     imgClassifications.append(intChar)
