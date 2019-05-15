@@ -1,7 +1,8 @@
-{% load app_filters %}{% load humanize %}
+{% load app_filters %} <!-- det er de filtre/funktioner som er blevet oprettet, blandt andet multiply-funktion -->
+{% load humanize %} <!-- formaterer tal, datoer og tider i et mere brugervenligt format -->
 <br><h3>Hej {{user.username}}!</h3>
 {% if logs.count > 0 %} <!-- Hvis brugeren har tidligere historik (derved også nummerplade) -->
-<h5>Du har {{logs.count}} poster i din parkeringshistorik.</h5>
+  <h5>Du har {{logs.count}} poster i din parkeringshistorik.</h5>
   <ul class="collapsible">
   {% for log in logs %} <!-- Kører igennem hver log -->
       {% if log.exited == NULL %} <!-- hvis bilen er kørt ud, skal den vise det på en anderledes måde -->
@@ -39,6 +40,7 @@
 {% elif plates.count == 0 %} <!-- Hvis brugeren endnu ikke har tilføjet nogen nummerplade -->
   <h5>Du har endnu ikke tilføjet nogen nummerplader!</h5><h6><a href="/addplate">Tryk her</a> (eller på plusset nede i højre hjørne) for at tilføje en nummerplade.</h6>
 {% else %}
+  <!-- er der kun en nummerplade skal det ikke stå i flertal -->
   {% if plates.count == 1 %}
     <h5>Du har endnu ikke brugt nogen af vores parkeringshuse med din registrerede nummerplade.</h5>
   {% else %}

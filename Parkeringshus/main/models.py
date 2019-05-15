@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 # Create your models here.
 valid = [RegexValidator(regex=r"^[A-Z]{2}[0-9]{5}", message='Nummerpladen skal være af formen AT27362 og må ikke indeholde små bogstaver.')]
 
+# kontakt-formular
 class Contact(models.Model):
     mail = models.EmailField()
     user = models.CharField(max_length=150)
@@ -17,6 +18,7 @@ class Contact(models.Model):
     message = models.TextField()
     file = models.FileField()
 
+# tilføjelse af plader
 class Plates(models.Model):
     plateNumber = models.CharField(max_length=7, verbose_name=u"Nummerplade", blank=False, null=False, validators=valid)
     userid = models.IntegerField(default=1)
@@ -26,27 +28,26 @@ class Plates(models.Model):
     def __str__(self):
         return self.plateNumber
 
-class Log(models.Model):
+class Log(models.Model): # log-poster (kørt ind og kørt ud)
     numberplate = models.CharField(max_length=8)
     entered = models.DateTimeField(default=datetime.now())
     exited = models.DateTimeField(default=datetime.now())
     entid = models.IntegerField(default=1)
 
-    def get_time_diff(self):
-
+    def get_time_diff(self): # tid fra kørt ind til kørt ud
         timediffSec = self.exited - self.entered
         timeDiff = timediffSec.total_seconds() / 3600 # Da det er per time, omregnes der fra sekunder til timer
         return math.ceil(timeDiff) # Da det er per påbegyndt time, skal der rundes op.
 
-    def time_till_now(self):
+    def time_till_now(self): # fra kørt ind til nu
         timediffSec = datetime.now - self.entered
         timeDiff = timediffSec.total_seconds() / 3600 # Da det er per time, omregnes der fra sekunder til timer
         return math.ceil(timeDiff) # Da det er per påbegyndt time, skal der rundes op.
 
-class ParkingEntity(models.Model):
+class ParkingEntity(models.Model): # de forskellige parkeringshuse
     name = models.CharField(max_length=20,default="")
     available = models.IntegerField(default=500)
     address = models.CharField(max_length=30)
     hourlyRate = models.IntegerField(default=8)
-    coords = models.CharField(max_length=100)
-    place = models.CharField(max_length=200)
+    coords = models.CharField(max_length=100) # til Google Maps-API
+    place = models.CharField(max_length=200) # til Google Maps-API

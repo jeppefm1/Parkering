@@ -1,7 +1,7 @@
 {% extends 'main/header.html' %}
 {% load app_filters %}{% load humanize %}
 {% block content %}
-<br><br>
+<br><br> <!-- først repræsenteret det i listeform -->
   {% if logs.count > 0 %} <!-- Hvis brugeren har tidligere historik (derved også nummerplade) -->
     <h2>I alt</h2>
       <table>
@@ -22,9 +22,10 @@
 
     <h3>Statistik</h3>
     <h4>Totale beløb og varighed</h4>
-    {% if graph1 %}
+    {% if graph1 %} <!-- er grafen defineret, da skal den vises -->
       <div>
-      {{ graph1|safe }}
+      {{ graph1|safe }} <!-- før den kan blive vist skal der indikeres at der
+        er tale om sikkert indhold, eller stoler template ikke på det -->
       </div>
     {% endif %}
     <h4>Ændringen i beløb og varighed</h4>

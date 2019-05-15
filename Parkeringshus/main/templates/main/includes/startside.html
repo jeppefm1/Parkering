@@ -1,3 +1,4 @@
+<!-- JavaScript EventListener initialisere 'slideshow'-elementet, dog uden navigation -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.slider');
@@ -16,6 +17,7 @@
     </li>
   </ul>
 </div>
+
 <div class="container">
   <div class="row">
     <div class="col l4 m12 s12">
@@ -41,6 +43,7 @@
     </div>
   </div>
 </div>
+
 <div class="divider"></div>
 <div class="container">
   <h4 class="center-align">Gennemsigtige priser</h4>
@@ -53,7 +56,7 @@
   <h5 class="center-align">Adskillige placeringer</h5>
   <ul class="collapsible">
     {% for place in parkplace %}
-    <li>
+    <li>      <!-- der loopes igennem parkeringssteder for at give information om timepris, navn, adresse og API-informationer til Google i form af koordinater og stedets navn -->
       <div class="collapsible-header"><i class="material-icons">place</i>{{place.name}} – {{place.hourlyRate}} kr/time | {{place.address}}</div>
       <div class="collapsible-body"><span>På adressen {{place.address}} befinder vores parkeringshus for {{place.name}} sig. Der er {{place.available}} pladser, og raten per påbegyndte time er {{place.hourlyRate}} kroner. Se nedenstående kort for placeringen:<br><br>
       <div class="map-responsive"><center><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!{{place.coords}}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!{{place.place}}!5m2!1sda!2sdk" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe></center></div>

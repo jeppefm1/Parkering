@@ -1,3 +1,5 @@
+<!-- Djangos giver mulighed for at informere brugeren gennem messages-modulet, som indeholder oplysning om typen og beskeden.
+Django viser dem dog ikke selv. Af denne grund benyttes MaterializeCSS' toast-modul til at give beskederne. De er pæne og interaktive. -->
 {% if messages %}
     {% for message in messages %}
         {% if message.tags == 'success'%}

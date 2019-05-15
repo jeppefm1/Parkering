@@ -18,11 +18,8 @@ from django.views.generic.edit import DeleteView
 from django.contrib import messages
 # Datetime til at holde øje med tiden
 from datetime import datetime
-# Skal kunne sende mails
-from django.core.mail import send_mail, BadHeaderError
-
 #Til at sende emails
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
 from django.template.loader import render_to_string
 #Henter mailadresse fra instillingerne
 from django.conf import settings
@@ -31,8 +28,16 @@ from django.conf import settings
 import plotly.offline as py
 import plotly.graph_objs as go
 
+<<<<<<< HEAD
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal den
 # supplere meget kontekst, hvilket gøres i render-funktionen.
+=======
+# Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
+# den vide:
+def rm_dups(nums):
+    set(tuple(element) for element in nums)
+    return [list(t) for t in set(tuple(element) for element in nums)]
+
 def homepage(request):
     current_user = request.user
     uid = current_user.id
@@ -134,7 +139,7 @@ def support(request):
             form = ContactFormUser(request.POST)
             if form.is_valid():
                 # Hvis formularen er gyldig skal data 'renses' – da det ellers
-                # er i en 
+                # er i en dictionary med alle mulige værdier
                 subject = form.cleaned_data['subject']
                 message = form.cleaned_data['message']
                 input = "Fra: {}\nEmne: {}\nBesked:\n{}\nSendt {}".format(current_user.id,subject,message,datetime.now())
@@ -313,6 +318,6 @@ def totalStats(request):
     else: return render(request=request,template_name="main/total.html")
 
 
-class deleteplate(DeleteView):
+class deleteplate(DeleteView): # her benyttes DeleteView, som blot skal vide hvad der skal slettes og hvor der er redirect til
     model = Plates
     success_url = reverse_lazy('main:addplate')

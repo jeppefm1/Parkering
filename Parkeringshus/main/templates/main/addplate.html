@@ -1,17 +1,22 @@
 {% extends 'main/header.html' %}
 
-{% block content %}
+{% block content %} <!-- bliver inkluderet i header.html -->
   <br><br><br>
   <ul class="collapsible">
+  <!-- vises kun for dem som er logget ind -->
   {% if user.is_authenticated %}
     {% for plate in plates %}
       {% if plate.userid == uid %}
+      <!-- laves i collapsible-form, så brugeren kan udvide elementerne -->
         {% if plate.state == 0 %}
+        <!-- hvis nummerpladen er bekræfter har den 0-status, hvilket vises med -->
           <li>
             <div class="collapsible-header"><i class="material-icons">done</i><b>Bekræftet</b>: {{plate.plateNumber}}</div>
             <div class="collapsible-body"><span>Tilføjet: {{plate.add_date}}<br>Historik: <a href="/">tryk her</a></span></div>
           </li>
         {% elif plate.state == 1 %}
+        <!-- hvis nummerpladen ikke er begrænset skal den vises på en anden måde - derudover skal der være mulighed for
+        at slette nummerpladen (kan også gøres ved at skrive til support), hvilket gøres gennem en formular -->
           <li>
             <div class="collapsible-header"><i class="material-icons">loop</i><em>Afventer</em>: {{plate.plateNumber}}</div>
             <div class="collapsible-body"><span><em>Godkendelse afventer</em><br>Tilføjet: {{plate.add_date}}<br><br>
@@ -26,7 +31,7 @@
     {% endfor %}
   </ul>
 
-    <!-- Kør for alle -->
+    <!-- Kør for alle: mulighed for at tilføje nye nummerplader-->
     <div class="row">
       <div class="col offset-l2 s12">
         <div class="row">

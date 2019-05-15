@@ -1,4 +1,4 @@
-<head>
+<head> <!-- indikerer først at der skal indlæses statisk indhold -->
   {% load static %}
   <!--Import Google Icon Font-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -47,11 +47,12 @@
   </script>
 </head>
 
-<body>
+<body> <!-- navbar og beskeder går forud for header -->
   {% include "main/includes/navbar.html" %}
   {% include "main/includes/messages.html" %}
   <div class="container">
     {% block content %}
+    <!-- heri bliver al indhold fra de øvrige sider inkluderet -->
     {% endblock %}
   </div>
   {% if user.is_authenticated %}

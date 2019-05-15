@@ -6,6 +6,8 @@ from . import views
 
 app_name = "main"
 
+# URL-mønsteret indstilles. Her refererer det første i path() til underdomænet, det
+# andet til hvilken view der skal vises, og hvilket navn det kan refereres til.
 urlpatterns = [
 	path('', views.homepage, name="homepage"),
 	path('total/', views.totalStats, name="totalStats"),
