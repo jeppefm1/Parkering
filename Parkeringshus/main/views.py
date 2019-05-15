@@ -28,10 +28,9 @@ from django.conf import settings
 import plotly.offline as py
 import plotly.graph_objs as go
 
-<<<<<<< HEAD
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal den
 # supplere meget kontekst, hvilket gøres i render-funktionen.
-=======
+
 # Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
 # den vide:
 def rm_dups(nums):
