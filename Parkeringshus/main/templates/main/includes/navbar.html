@@ -1,12 +1,28 @@
+<!-- Først oprettes det som dropdown-menuen skal indeholde, det vil altså sige det
+som dukker op når man som bruger trykker på sit brugernavn-->
 <ul id="bruger" class="dropdown-content">
   <li><a href="/logout">Log ud</a></li>
   <li class="divider"></li>
   <li class="tab right"><a href="/settings">Indstillinger</a></li>
   <li class="tab right"><a href="/support">Support</a></li>
+  <!-- Staff skal have mulighed for at trykke og komme hen på admin-siden -->
   {% if user.is_staff %}
     <li class="divider"></li>
     <li class="tab right"><a href="/admin">Admin</a></li>
   {% endif %}
+</ul>
+
+<!-- Herefter defineres det som sidenav/mobil-navigationen skal indeholde -->
+
+<ul class="sidenav" id="mobile-demo">
+  <!-- Er brugeren logget ind skal det være tydeligt, og man skal kunne logge ud -->
+ {% if user.is_authenticated %}
+   <li><a href="#">{{user.username}}</a></li>
+   <li><a href="/logout">Log ud</a></li>
+ {% else %}
+  <li><a href="/login">Log ind</a></li>
+   <li><a href="/registrer">Registrer</a></li>
+ {% endif %}
 </ul>
 
 <div class="navbar-fixed">
@@ -20,7 +36,7 @@
            <li><a class="dropdown-trigger" href="#!" data-target="bruger">{{user.username}}<i class="material-icons right">arrow_drop_down</i></a></li>
          {% else %}
           <li><a href="/login">Log ind</a></li>
-           <li><a href="/registrer">Registrer</a></li>
+          <li><a href="/registrer">Registrer</a></li>
          {% endif %}
        </ul>
      </div>
@@ -34,13 +50,3 @@
      {% endif %}
   </nav>
 </div>
-
- <ul class="sidenav" id="mobile-demo">
-   {% if user.is_authenticated %}
-     <li><a href="#">{{user.username}}</a></li>
-     <li><a href="/logout">Log ud</a></li>
-   {% else %}
-    <li><a href="/login">Log ind</a></li>
-     <li><a href="/registrer">Registrer</a></li>
-   {% endif %}
- </ul>
