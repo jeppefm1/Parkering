@@ -31,14 +31,8 @@ from django.conf import settings
 import plotly.offline as py
 import plotly.graph_objs as go
 
-# Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal
-# den vide
-
-
-def rm_dups(nums):
-    set(tuple(element) for element in nums)
-    return [list(t) for t in set(tuple(element) for element in nums)]
-
+# Startsiden skal vide om brugeren er logget ind. Hvis det er sandt, så skal den
+# supplere meget kontekst, hvilket gøres i render-funktionen.
 def homepage(request):
     current_user = request.user
     uid = current_user.id
@@ -59,9 +53,11 @@ def send_html_email(to_list, subject, template_name, context, sender=settings.DE
     msg.content_subtype = "html"  # Main content is now text/html
     return msg.send()
 
-
+# registrering
 def register(request):
+    # hvis brugeren prøver at indsende formularen, da vil det være en POST-request.
     if request.method == "POST":
+        # det betyder at en bruger skal oprettes. Der skal benyttes forskellige metoder.
         form = NewUserForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -75,7 +71,7 @@ def register(request):
             context = {'username': username}
             send_html_email(to_list, subject, template_name, context, sender=settings.DEFAULT_FROM_EMAIL)
 
-
+            # brugeren bliver logget ind
             login(request, user)
             messages.info(request, f"Du er nu logget ind med {username}.")
             return redirect("main:homepage")
@@ -90,19 +86,25 @@ def register(request):
                   "main/register.html",
                   context={"form":form})
 
+# Når en bruger prøver at logge ud
 def logout_request(request):
     logout(request)
     messages.info(request, "Du er nu logget ud.")
     return redirect("main:homepage")
 
+# Når en bruger prøver at logge ind
 def login_request(request):
+    # Igen er der tale om en form, så det skal være en POST-request
     if request.method == 'POST':
         form = AuthenticationForm(request=request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            # Brugeren skal autenciteres gennem brugernavn og adgangskode
             user = authenticate(username=username, password=password)
             if user is not None:
+                # Findes brugeren skal brugeren logges ind, og en info-besked
+                # skal fortælle at man er logget ind og omdirigeres til brugersiden
                 login(request, user)
                 messages.info(request, f"Du er nu logget på som {username}")
                 return redirect('main:homepage')
@@ -115,17 +117,24 @@ def login_request(request):
                     template_name = "main/login.html",
                     context={"form":form})
 
+# Support-siden har to forskellige tilfælde
 def support(request):
     current_user = request.user
+    # er det en GET-request skal det blot vises
     if request.method == 'GET':
+        # Brugeren er logget ind
         if current_user.is_authenticated:
             form = ContactFormUser
+        # Brugeren er ikke logget ind
         else:
             form = ContactFormAnon()
+    # Ellers må det være en POST-request, som så betyder at formularen er udfyldt
     else:
         if current_user.is_authenticated:
             form = ContactFormUser(request.POST)
             if form.is_valid():
+                # Hvis formularen er gyldig skal data 'renses' – da det ellers
+                # er i en 
                 subject = form.cleaned_data['subject']
                 message = form.cleaned_data['message']
                 input = "Fra: {}\nEmne: {}\nBesked:\n{}\nSendt {}".format(current_user.id,subject,message,datetime.now())
